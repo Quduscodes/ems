@@ -29,13 +29,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sizer: ^2.0.15
   http: ^0.13.1
   dartz: ^0.10.1
   image_picker: ^0.8.4+8
   dio: ^4.0.4
+  firebase_auth: ^3.3.8
+  flutter_screenutil: ^5.1.0
+  google_fonts: 2.2.0
+  flutter_svg: ^1.0.1
   timeago: ^3.2.2
   fluttertoast: ^8.0.8
+  animated_text_kit: ^4.2.1
   cupertino_icons: ^1.0.2
   websafe_svg: ^2.0.0
   flutter_riverpod: ^1.0.0-dev.10
@@ -95,7 +99,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/images/
+    - assets/svgs/
+
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
