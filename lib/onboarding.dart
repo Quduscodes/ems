@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:ems/exports.dart';
 
 class Onboarding extends StatefulWidget {
@@ -102,58 +104,76 @@ class _OnboardingState extends State<Onboarding>
                             ),
                     ),
                     Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            bottom: ScreenUtil().setHeight(40),
-                            left: ScreenUtil().setWidth(20),
-                            right: ScreenUtil().setWidth(20)),
-                        //width: 311.0.w,
-                        height: 400.0.h,
-                        decoration: BoxDecoration(
-                          color: whiteColor,
-                          borderRadius: BorderRadius.circular(45.0),
-                        ),
-                        child: PageView.builder(
-                          controller: containerController,
-                          scrollDirection: Axis.horizontal,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: onBoardingList!.length,
-                          onPageChanged: onItemTapped,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32.0.w),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 40.0.h,
-                                  ),
-                                  Text(
-                                    onBoardingList![index].header!,
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        CustomTheme.largeText(context).copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: blackColor,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20.0.h,
-                                  ),
-                                  Text(
-                                    onBoardingList![index].description!,
-                                    textAlign: TextAlign.center,
-                                    style: CustomTheme.normalText(context)
-                                        .copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: blackColor.withOpacity(0.4),
-                                    ),
-                                  ),
+                      child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                bottom: ScreenUtil().setHeight(40),
+                                left: ScreenUtil().setWidth(20),
+                                right: ScreenUtil().setWidth(20)),
+                            //width: 311.0.w,
+                            height: 400.0.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withOpacity(0.5),
+                                  Colors.white.withOpacity(0.2)
                                 ],
+                                begin: AlignmentDirectional.topStart,
+                                end: AlignmentDirectional.bottomEnd,
                               ),
-                            );
-                          },
+                              border: Border.all(
+                                  width: 1.5,
+                                  color: Colors.white.withOpacity(0.2)),
+                              color: whiteColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(45.0),
+                            ),
+                            child: PageView.builder(
+                              controller: containerController,
+                              scrollDirection: Axis.horizontal,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: onBoardingList!.length,
+                              onPageChanged: onItemTapped,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 32.0.w),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 40.0.h,
+                                      ),
+                                      Text(
+                                        onBoardingList![index].header!,
+                                        textAlign: TextAlign.center,
+                                        style: CustomTheme.largeText(context)
+                                            .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: whiteColor,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20.0.h,
+                                      ),
+                                      Text(
+                                        onBoardingList![index].description!,
+                                        textAlign: TextAlign.center,
+                                        style: CustomTheme.normalText(context)
+                                            .copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: whiteColor.withOpacity(0.9),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -446,7 +466,7 @@ Widget circularIndicator(
     width: value == true ? 5.0.w : 5.0.w,
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular((5.0.h + 5.0.w) * 0.2),
-        color: value == true ? primaryColor : whiteColorShade4),
+        color: value == true ? primaryColor : Colors.white),
   );
 }
 

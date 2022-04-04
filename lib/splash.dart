@@ -62,7 +62,7 @@ class Splash extends StatelessWidget {
                       SizedBox(
                         height: 10.h,
                       ),
-                      AnimatedTextKit(repeatForever: false, animatedTexts: [
+                      AnimatedTextKit(repeatForever: true, animatedTexts: [
                         FadeAnimatedText('Electrical Power Management System',
                             textStyle: CustomTheme.largeText(context).copyWith(
                                 fontFamily:

@@ -28,6 +28,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const StaffLogin());
       case adminLogin:
         return MaterialPageRoute(builder: (_) => const AdminLogin());
+      case staffSignup:
+        return MaterialPageRoute(builder: (_) => const StaffSignUp());
+      case adminSignup:
+        return MaterialPageRoute(builder: (_) => const AdminSignUp());
     }
   }
 }
