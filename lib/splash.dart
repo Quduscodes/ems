@@ -1,6 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:ems/exports.dart';
-import 'package:flutter/rendering.dart';
 
 class Splash extends StatelessWidget {
   const Splash({Key? key}) : super(key: key);

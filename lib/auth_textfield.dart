@@ -167,9 +167,9 @@ class _AuthPasswordFieldState extends State<AuthPasswordField>
             icon: AnimatedSize(
                 duration: const Duration(milliseconds: 400),
                 child: visible
-                    ? const Icon(Icons.visibility, color: Color(0xff777777))
+                    ? const Icon(Icons.visibility_off, color: Color(0xff777777))
                     : const Icon(
-                        Icons.visibility_off,
+                        Icons.visibility,
                         color: Color(0xff777777),
                       )),
           ),

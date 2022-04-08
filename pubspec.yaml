@@ -70,6 +70,7 @@ dependency_overrides:
   location: ^4.3.0
   geocoding: ^2.0.2
   firebase_messaging_platform_interface: 3.1.6
+  firebase_auth_platform_interface: 6.1.11
 
 
 dev_dependencies:

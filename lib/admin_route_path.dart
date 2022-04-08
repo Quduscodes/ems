@@ -9,7 +9,8 @@ class AdminRoutePath extends StatelessWidget {
         valueListenable:
             Hive.box<String>(StringConst.authStateBox).listenable(),
         builder: (context, Box<String> box, _) {
-          if (box.get(StringConst.authState) == AuthState.LoggedIn.toString()) {
+          debugPrint(box.get(StringConst.authState));
+          if (box.get(StringConst.authState) != AuthState.LoggedIn.toString()) {
             return const AdminHomePage();
           } else {
             return const Splash();

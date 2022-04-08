@@ -68,6 +68,8 @@ class CustomTheme {
       //accentColor: Colors.black,
       // textTheme: _textTheme(),
       //typography: Typography(),
+      snackBarTheme: const SnackBarThemeData(
+          elevation: 0.0, backgroundColor: Colors.transparent),
       platform: TargetPlatform.iOS,
       pageTransitionsTheme: const PageTransitionsTheme(builders: {
         TargetPlatform.android: ZoomPageTransitionsBuilder(),

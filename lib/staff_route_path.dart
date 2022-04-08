@@ -8,7 +8,7 @@ class StaffRoutePath extends StatelessWidget {
         valueListenable:
             Hive.box<String>(StringConst.authStateBox).listenable(),
         builder: (context, Box<String> box, _) {
-          if (box.get(StringConst.authState) == AuthState.LoggedIn.toString()) {
+          if (box.get(StringConst.authState) != AuthState.LoggedIn.toString()) {
             return const StaffHomePage();
           } else {
             return const Splash();

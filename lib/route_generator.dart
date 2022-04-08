@@ -1,3 +1,4 @@
+import 'add_staffSpace.dart';
 import 'exports.dart';
 
 class RouteGenerator {
@@ -12,6 +13,7 @@ class RouteGenerator {
   static const String adminSignup = "/adminSignup";
   static const String staffSignup = "/staffSignup";
   static const String staffLogin = "/staffLogin";
+  static const String configureSpaceStaff = "/configureSpaceStaff";
   static const String splash = "/";
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -32,6 +34,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const StaffSignUp());
       case adminSignup:
         return MaterialPageRoute(builder: (_) => const AdminSignUp());
+        case configureSpaceStaff:
+        return MaterialPageRoute(builder: (_) => const ConfigureSpaceStaff());
     }
   }
 }
