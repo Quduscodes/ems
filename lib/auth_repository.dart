@@ -81,7 +81,7 @@ class Authentication extends ChangeNotifier {
           {
             "type": "",
             "noOfFan": "",
-            "spaceOwner": "${firstName.trim()}${lastName.trim()}",
+            "spaceOwner": "${firstName.trim()} ${lastName.trim()}",
             "noOfAc": "",
             "noOfBulb": "",
             "noOfFridge": "",
@@ -201,26 +201,10 @@ class Authentication extends ChangeNotifier {
         if (value.exists) {
           ref.watch(authLoader.notifier).state = false;
           Navigator.pushNamed(context, RouteGenerator.adminLogin);
-          // FirebaseFirestore.instance.runTransaction((transaction) async {
-          //   transaction.update(docRefUser, {
-          //     "email":email,
-          //     "password":password,
-          //     // "mainChat": FieldValue.arrayUnion([
-          //     //   {
-          //     //     "from": "me",
-          //     //     "msg": msg,
-          //     //     "to": "Admin",
-          //     //     "time": DateTime.now().toString(),
-          //     //   }
-          //     // ])
-          //   });
-          // });
         } else {
           ref.watch(authLoader.notifier).state = false;
           docRefAdmin.set({
             "createdAt": DateTime.now(),
-            // "profile_pic": user.profilePicture,
-            // "name": username,
             "email": email,
             "firstName": firstName,
             "lastName": lastName,
@@ -237,29 +221,39 @@ class Authentication extends ChangeNotifier {
                 "_id": DateTime.now().microsecondsSinceEpoch
               }
             ]),
-            // "mainChat": FieldValue.arrayUnion([
-            //   {
-            //     "from": "me",
-            //     "msg": msg,
-            //     "to": "Admin",
-            //     "time": DateTime.now().toString(),
-            //   }
-            // ])
           }).then((value) {
-            docRefSpace.set({
-              "space": FieldValue.arrayUnion([
-                {
-                  "type": "",
-                  "noOfFan": "",
-                  "noOfAc": "",
-                  "spaceOwner": "${firstName.trim()}${lastName.trim()}",
-                  "noOfBulb": "",
-                  "noOfFridge": "",
-                  "noOfTelevision": "",
-                  "_id": DateTime.now().microsecondsSinceEpoch
-                }
-              ]),
-            });
+            docRefSpace.get().then((value) => value.exists
+                ? FirebaseFirestore.instance
+                    .runTransaction((transaction) async {
+                    transaction.update(docRefSpace, {
+                      "space": FieldValue.arrayUnion([
+                        {
+                          "type": "",
+                          "noOfFan": "",
+                          "noOfAc": "",
+                          "spaceOwner": "${firstName.trim()}${lastName.trim()}",
+                          "noOfBulb": "",
+                          "noOfFridge": "",
+                          "noOfTelevision": "",
+                          "_id": DateTime.now().microsecondsSinceEpoch
+                        }
+                      ]),
+                    });
+                  })
+                : docRefSpace.set({
+                    "space": FieldValue.arrayUnion([
+                      {
+                        "type": "",
+                        "noOfFan": "",
+                        "spaceOwner": "${firstName.trim()} ${lastName.trim()}",
+                        "noOfAc": "",
+                        "noOfBulb": "",
+                        "noOfFridge": "",
+                        "noOfTelevision": "",
+                        "_id": DateTime.now().microsecondsSinceEpoch
+                      }
+                    ])
+                  }));
           }).then((value) {
             storeUserData(UserData(
               firstName: firstName,

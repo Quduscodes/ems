@@ -53,7 +53,11 @@ class _ConfigureSpaceStaff extends State<ConfigureSpaceStaff> {
                                   "noOfBulb": "6",
                                   "noOfFridge": "1",
                                 }
-                              });
+                              }).then((value) => _spacesFireStore
+                                      .doc(box
+                                          .get(StringConst.userDataKey)!
+                                          .userId)
+                                      .snapshots());
                             },
                           ),
                         ],
