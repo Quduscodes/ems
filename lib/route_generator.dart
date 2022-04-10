@@ -1,4 +1,3 @@
-import 'addSpace_admin.dart';
 import 'exports.dart';
 
 class RouteGenerator {
@@ -17,6 +16,7 @@ class RouteGenerator {
   static const String configureSpaceStaff = "/configureSpaceStaff";
   static const String editAdminSpace = "/editAdminSpace";
   static const String addAdminSpace = "/addAdminSpace";
+  static const String editSpaceStaff = "/editSpaceStaff";
   static const String splash = "/";
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -45,6 +45,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const AppliancesView());
       case addAdminSpace:
         return MaterialPageRoute(builder: (_) => const AddAdminSpace());
+      case editSpaceStaff:
+        return MaterialPageRoute(builder: (_) => const EditSpaceStaff());
     }
   }
 }

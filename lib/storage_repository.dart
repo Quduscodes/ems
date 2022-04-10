@@ -88,8 +88,7 @@ class StorageRepository extends ChangeNotifier {
   addUserSpace(BuildContext context, Space data) {
     var docRefUser =
         FirebaseFirestore.instance.collection('users').doc(user!.userId);
-    final String id = DateTime.now().microsecondsSinceEpoch.toString();
-    var docRefSpace = FirebaseFirestore.instance.collection('spaces').doc(id);
+    var docRefSpace = FirebaseFirestore.instance.collection('spaces').doc(data.sId);
     docRefSpace
         .set({
           "space": data.toJson(),
@@ -98,7 +97,13 @@ class StorageRepository extends ChangeNotifier {
             FirebaseFirestore.instance.runTransaction((transaction) async {
               transaction.update(docRefUser, {"space": data.toJson()});
             }))
-        .then((value) => Navigator.pop(context));
+        .then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
+            context,
+            text: 'Successfully added space',
+          ));
+          Navigator.pop(context);
+        });
   }
 
   deleteAdminSpace(BuildContext context) {
@@ -128,20 +133,28 @@ class StorageRepository extends ChangeNotifier {
         });
   }
 
-  deleteUserSpace(BuildContext context, Space data) {
+  deleteUserSpace(BuildContext context) {
     var docRefUser =
         FirebaseFirestore.instance.collection('users').doc(user!.userId);
-    var docRefSpace =
-        FirebaseFirestore.instance.collection('spaces').doc(data.sId);
+    var docRefSpace = FirebaseFirestore.instance
+        .collection('spaces')
+        .doc(ref.watch(spaceProvider)!.sId);
     docRefSpace
         .delete()
         .then((value) => docRefUser.update({
               "space": {},
             }))
-        .then((value) => null);
+        .then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
+        context,
+        text: 'Successfully deleted space',
+      ));
+      Navigator.pop(context);
+    });
   }
 
   editUserSpace(BuildContext context, Space data) {
+    dropKeyboard(context);
     var docRefUser =
         FirebaseFirestore.instance.collection('users').doc(user!.userId);
     var docRefSpace =
@@ -151,12 +164,19 @@ class StorageRepository extends ChangeNotifier {
           "space": data.toJson(),
         })
         .then((value) => docRefUser.update({
-              "space": data,
+              "space": data.toJson(),
             }))
-        .then((value) => null);
+        .then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
+            context,
+            text: 'Successfully edited space',
+          ));
+          Navigator.pop(context);
+        });
   }
 
   editAdminSpace(BuildContext context, Space data) {
+    dropKeyboard(context);
     ref.watch(spaceListProvider)![ref.watch(indexProvider)!] = data;
     var docRefAdmin =
         FirebaseFirestore.instance.collection('admin').doc(user!.userId);

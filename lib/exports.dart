@@ -29,6 +29,7 @@ export 'package:flutter_svg/svg.dart';
 export 'package:google_fonts/google_fonts.dart';
 export 'package:hive_flutter/hive_flutter.dart';
 
+export 'addSpace_admin.dart';
 export 'add_staffSpace.dart';
 export 'admin_login.dart';
 export 'appliances.dart';
@@ -38,4 +39,5 @@ export 'auth_textfield.dart';
 export 'back_button.dart';
 export 'custom_auth_button.dart';
 export 'custom_border_button.dart';
+export 'editStaff_space.dart';
 export 'loading_modal.dart';

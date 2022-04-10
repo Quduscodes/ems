@@ -101,6 +101,19 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                   }
                                   final Space data =
                                       Space.fromJson(snapshot.data!['space']);
+                                  int? totalRating = 0;
+
+                                  if (data.spaceOwner != null) {
+                                    for (Appliances appliance
+                                        in data.appliances!) {
+                                      totalRating =
+                                          int.tryParse(appliance.rating!)! *
+                                                  int.tryParse(
+                                                      appliance.quantity!)! +
+                                              totalRating!;
+                                    }
+                                  }
+
                                   if (data.spaceOwner == null) {
                                     return Material(
                                         type: MaterialType.transparency,
@@ -173,7 +186,7 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                         Navigator.pushNamed(
                                                             context,
                                                             RouteGenerator
-                                                                .configureSpaceStaff);
+                                                                .editSpaceStaff);
                                                       },
                                                       child: const Padding(
                                                         padding:
@@ -197,7 +210,7 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                   horizontal: 10.w,
                                                   vertical: 5.h),
                                               child: Text(
-                                                "4.5kva",
+                                                totalRating.toString(),
                                                 style: CustomTheme.largeText(
                                                         context)
                                                     .copyWith(
@@ -212,145 +225,48 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                               height: 10.h,
                                             ),
                                             Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.w,
-                                                  vertical: 10.h),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        data.spaceOwner!,
-                                                        style: CustomTheme
-                                                                .mediumText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    25.sp),
-                                                      ),
-                                                      Text(
-                                                        "Fans",
-                                                        style: CustomTheme
-                                                                .normalText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    15.sp),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        data.spaceOwner!,
-                                                        style: CustomTheme
-                                                                .mediumText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    25.sp),
-                                                      ),
-                                                      Text(
-                                                        "Air Conditioners",
-                                                        style: CustomTheme
-                                                                .normalText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    15.sp),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        data.spaceOwner!,
-                                                        style: CustomTheme
-                                                                .mediumText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    25.sp),
-                                                      ),
-                                                      Text(
-                                                        "Bulbs",
-                                                        style: CustomTheme
-                                                                .normalText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    15.sp),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        data.spaceOwner!,
-                                                        style: CustomTheme
-                                                                .mediumText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    25.sp),
-                                                      ),
-                                                      Text(
-                                                        "Televisions",
-                                                        style: CustomTheme
-                                                                .normalText(
-                                                                    context)
-                                                            .copyWith(
-                                                                color:
-                                                                    whiteColorShade2,
-                                                                fontFamily: GoogleFonts
-                                                                        .adamina()
-                                                                    .fontFamily,
-                                                                fontSize:
-                                                                    15.sp),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.w,
+                                                    vertical: 10.h),
+                                                child: Row(
+                                                  children: data.appliances!
+                                                      .map((e) => Padding(
+                                                        padding:  EdgeInsets.symmetric(horizontal: 5.w),
+                                                        child: Column(
+                                                              children: [
+                                                                Text(
+                                                                  e.quantity!,
+                                                                  style: CustomTheme
+                                                                          .mediumText(
+                                                                              context)
+                                                                      .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                          fontFamily:
+                                                                              GoogleFonts.adamina()
+                                                                                  .fontFamily,
+                                                                          fontSize:
+                                                                              25.sp),
+                                                                ),
+                                                                Text(
+                                                                  e.applianceName!,
+                                                                  style: CustomTheme
+                                                                          .normalText(
+                                                                              context)
+                                                                      .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                          fontFamily:
+                                                                              GoogleFonts.adamina()
+                                                                                  .fontFamily,
+                                                                          fontSize:
+                                                                              15.sp),
+                                                                )
+                                                              ],
+                                                            ),
+                                                      ))
+                                                      .toList(),
+                                                )),
                                           ],
                                         ));
                                   }
