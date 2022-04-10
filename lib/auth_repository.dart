@@ -57,39 +57,13 @@ class Authentication extends ChangeNotifier {
 
   Future saveUserInfoToFirestore(
       User fUser, String firstName, String lastName) async {
-    var docRefSpace =
-        FirebaseFirestore.instance.collection('spaces').doc(fUser.uid);
     FirebaseFirestore.instance.collection("users").doc(fUser.uid).set({
       "uid": fUser.uid,
       "email": fUser.email,
       "firstName": firstName.trim(),
       "lastName": lastName.trim(),
-      "space": {
-        "type": "",
-        "spaceOwner": "${firstName.trim()}${lastName.trim()}",
-        "noOfFan": "",
-        "noOfAc": "",
-        "noOfBulb": "",
-        "noOfTelevision": '',
-        "noOfFridge": "",
-        "_id": DateTime.now().microsecondsSinceEpoch,
-      },
+      "space": {},
       "createdAt": DateTime.now()
-    }).then((value) {
-      docRefSpace.set({
-        "space": FieldValue.arrayUnion([
-          {
-            "type": "",
-            "noOfFan": "",
-            "spaceOwner": "${firstName.trim()} ${lastName.trim()}",
-            "noOfAc": "",
-            "noOfBulb": "",
-            "noOfFridge": "",
-            "noOfTelevision": "",
-            "_id": DateTime.now().microsecondsSinceEpoch
-          }
-        ]),
-      });
     }).then((value) => ref.watch(authLoader.notifier).state = false);
   }
 
@@ -195,8 +169,6 @@ class Authentication extends ChangeNotifier {
       ref.watch(authLoader.notifier).state = true;
       final _fireStore = FirebaseFirestore.instance;
       var docRefAdmin = _fireStore.collection('admin').doc(email);
-      var docRefSpace = _fireStore.collection('spaces').doc(email);
-
       docRefAdmin.get().then((value) {
         if (value.exists) {
           ref.watch(authLoader.notifier).state = false;
@@ -209,51 +181,7 @@ class Authentication extends ChangeNotifier {
             "firstName": firstName,
             "lastName": lastName,
             "password": password,
-            "space": FieldValue.arrayUnion([
-              {
-                "type": "",
-                "noOfFan": "",
-                "noOfAc": "",
-                "spaceOwner": "${firstName.trim()}${lastName.trim()}",
-                "noOfBulb": "",
-                "noOfFridge": "",
-                "noOfTelevision": "",
-                "_id": DateTime.now().microsecondsSinceEpoch
-              }
-            ]),
-          }).then((value) {
-            docRefSpace.get().then((value) => value.exists
-                ? FirebaseFirestore.instance
-                    .runTransaction((transaction) async {
-                    transaction.update(docRefSpace, {
-                      "space": FieldValue.arrayUnion([
-                        {
-                          "type": "",
-                          "noOfFan": "",
-                          "noOfAc": "",
-                          "spaceOwner": "${firstName.trim()}${lastName.trim()}",
-                          "noOfBulb": "",
-                          "noOfFridge": "",
-                          "noOfTelevision": "",
-                          "_id": DateTime.now().microsecondsSinceEpoch
-                        }
-                      ]),
-                    });
-                  })
-                : docRefSpace.set({
-                    "space": FieldValue.arrayUnion([
-                      {
-                        "type": "",
-                        "noOfFan": "",
-                        "spaceOwner": "${firstName.trim()} ${lastName.trim()}",
-                        "noOfAc": "",
-                        "noOfBulb": "",
-                        "noOfFridge": "",
-                        "noOfTelevision": "",
-                        "_id": DateTime.now().microsecondsSinceEpoch
-                      }
-                    ])
-                  }));
+            "space": {},
           }).then((value) {
             storeUserData(UserData(
               firstName: firstName,

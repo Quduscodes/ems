@@ -1,4 +1,5 @@
 import 'package:ems/exports.dart';
+import 'package:ems/space_data.dart';
 
 class ConfigureSpaceStaff extends StatefulWidget {
   const ConfigureSpaceStaff({Key? key}) : super(key: key);
@@ -8,10 +9,8 @@ class ConfigureSpaceStaff extends StatefulWidget {
 }
 
 class _ConfigureSpaceStaff extends State<ConfigureSpaceStaff> {
-  final CollectionReference _fireStore =
-      FirebaseFirestore.instance.collection('users');
-  final CollectionReference _spacesFireStore =
-      FirebaseFirestore.instance.collection('spaces');
+  final UserData? user =
+      Hive.box<UserData>(StringConst.userDataBox).get(StringConst.userDataKey);
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -40,26 +39,25 @@ class _ConfigureSpaceStaff extends State<ConfigureSpaceStaff> {
                           child: ListView(
                         shrinkWrap: true,
                         children: [
-                          CustomAuthButton(
-                            text: "Login",
-                            onPressed: () {
-                              _fireStore
-                                  .doc(box.get(StringConst.userDataKey)!.userId)
-                                  .update({
-                                "space": {
-                                  "type": "room",
-                                  "noOfFan": "6",
-                                  "noOfAc": "2",
-                                  "noOfBulb": "6",
-                                  "noOfFridge": "1",
-                                }
-                              }).then((value) => _spacesFireStore
-                                      .doc(box
-                                          .get(StringConst.userDataKey)!
-                                          .userId)
-                                      .snapshots());
-                            },
-                          ),
+                          Consumer(builder: (context, WidgetRef ref, child) {
+                            return CustomAuthButton(
+                              text: "Configure",
+                              onPressed: () {
+                                ref.watch(storageProvider.notifier).addUserSpace(
+                                    context,
+                                    Space(
+                                        spaceOwner:
+                                            "${user!.firstName!} ${user!.lastName!}",
+                                        type: "room",
+                                        appliances: [
+                                          Appliances(
+                                              sId: "jjj",
+                                              applianceName: ("jjj"),
+                                              rating: "111")
+                                        ]));
+                              },
+                            );
+                          }),
                         ],
                       ))
                     ],

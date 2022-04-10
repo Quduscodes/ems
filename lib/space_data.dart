@@ -1,42 +1,73 @@
-class SpaceData {
+class ApplianceModel {
+  Space? space;
+
+  ApplianceModel({this.space});
+
+  ApplianceModel.fromJson(Map<String, dynamic> json) {
+    space = json['space'] != null ? Space.fromJson(json['space']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (space != null) {
+      data['space'] = space!.toJson();
+    }
+    return data;
+  }
+}
+
+class Space {
+  List<Appliances>? appliances;
   String? sId;
-  String? noOfBulb;
-  String? noOfFridge;
-  String? noOfFan;
-  String? noOfAc;
-  String? spaceOwner;
   String? type;
-  String? noOfTelevision;
+  String? spaceOwner;
 
-  SpaceData(
-      {this.noOfBulb,
-      this.noOfFridge,
-      this.noOfFan,
-      this.noOfAc,
-      this.type,
-      this.sId,
-      this.spaceOwner});
+  Space({this.appliances, this.sId, this.type, this.spaceOwner});
 
-  SpaceData.fromJson(Map<String, dynamic> json) {
-    noOfBulb = json['noOfBulb'];
-    noOfFridge = json['noOfFridge'];
-    noOfFan = json['noOfFan'];
-    noOfAc = json['noOfAc'];
-    spaceOwner = json['spaceOwner'];
+  Space.fromJson(Map<String, dynamic> json) {
+    if (json['appliances'] != null) {
+      appliances = <Appliances>[];
+      json['appliances'].forEach((v) {
+        appliances!.add(Appliances.fromJson(v));
+      });
+    }
+    sId = json['_id'];
     type = json['type'];
-    noOfTelevision = json['noOfTelevision'];
+    spaceOwner = json['spaceOwner'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (appliances != null) {
+      data['appliances'] = appliances!.map((v) => v.toJson()).toList();
+    }
+    data['_id'] = sId;
+    data['type'] = type;
+    data['spaceOwner'] = spaceOwner;
+    return data;
+  }
+}
+
+class Appliances {
+  String? applianceName;
+  String? rating;
+  String? sId;
+  String? quantity;
+
+  Appliances({this.applianceName, this.rating, this.sId});
+
+  Appliances.fromJson(Map<String, dynamic> json) {
+    applianceName = json['applianceName'];
+    rating = json['rating'];
+    quantity = json['quantity'];
     sId = json['_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['noOfBulb'] = noOfBulb;
-    data['noOfFridge'] = noOfFridge;
-    data['spaceOwner'] = spaceOwner;
-    data['noOfFan'] = noOfFan;
-    data['noOfAc'] = noOfAc;
-    data['noOfTelevision'] = noOfTelevision;
-    data['type'] = type;
+    data['applianceName'] = applianceName;
+    data['rating'] = rating;
+    data['quantity'] = quantity;
     data['_id'] = sId;
     return data;
   }

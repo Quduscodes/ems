@@ -17,24 +17,35 @@ class _StaffHomePageState extends State<StaffHomePage> {
         value: const SystemUiOverlayStyle(
           // For Android.
           // Use [light] for white status bar and [dark] for black status bar.
-          statusBarIconBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
           // For iOS.
           // Use [dark] for white status bar and [light] for black status bar.
           statusBarBrightness: Brightness.dark,
           statusBarColor: Colors.transparent,
         ),
-        child: ValueListenableBuilder(
-            valueListenable:
-                Hive.box<UserData>(StringConst.userDataBox).listenable(),
-            builder: (context, Box<UserData> box, _) {
-              return Scaffold(
-                  body: SafeArea(
-                child: Container(
+        child: Consumer(builder: (context, WidgetRef ref, child) {
+          return ValueListenableBuilder(
+              valueListenable:
+                  Hive.box<UserData>(StringConst.userDataBox).listenable(),
+              builder: (context, Box<UserData> box, _) {
+                return Scaffold(
+                    body: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        gradientGreen1,
+                        gradientGreen2,
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: 15.w),
                   child: Column(
                     children: [
                       Expanded(
                         child: ListView(
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           children: [
                             Row(
@@ -44,7 +55,7 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                   "Welcome ${box.get(StringConst.userDataKey)!.lastName ?? ''},",
                                   style: CustomTheme.semiLargeText(context)
                                       .copyWith(
-                                          color: darkGreenTextColor,
+                                          color: whiteColorShade2,
                                           fontFamily:
                                               GoogleFonts.adamina().fontFamily,
                                           fontSize: 25.sp),
@@ -54,17 +65,17 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                       horizontal: 7.w, vertical: 5.h),
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: darkGreenTextColor)),
-                                  child: Icon(
+                                      border:
+                                          Border.all(color: whiteColorShade5)),
+                                  child: const Icon(
                                     Icons.person,
-                                    color: darkGreenTextColor,
+                                    color: whiteColorShade5,
                                   ),
                                 ),
                               ],
                             ),
                             SizedBox(
-                              height: 10.h,
+                              height: 30.h,
                             ),
                             StreamBuilder<DocumentSnapshot>(
                                 stream: _fireStore
@@ -88,93 +99,319 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                   if (!snapshot.data!.exists) {
                                     return const Text("Start Chat");
                                   }
-                                  final SpaceData data = SpaceData.fromJson(
-                                      snapshot.data!['space']);
-                                  return data.type!.isEmpty
-                                      ? Material(
-                                          type: MaterialType.transparency,
-                                          child: InkWell(
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    RouteGenerator
-                                                        .configureSpaceStaff);
-                                              },
-                                              child: Text("Configure space")))
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: darkGreenTextColor),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.w,
-                                                    vertical: 10.h),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Your ${data.type}:"),
-                                                    Icon(Icons.settings)
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10.h,
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.w,
-                                                    vertical: 10.h),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Column(
-                                                      children: [
-                                                        Text(data.noOfFan!),
-                                                        Text("Fans")
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(data.noOfAc!),
-                                                        Text("Air Conditioners")
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(data.noOfBulb!),
-                                                        Text("Bulbs")
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(data
-                                                            .noOfTelevision!),
-                                                        Text("Televisions")
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
+                                  final Space data =
+                                      Space.fromJson(snapshot.data!['space']);
+                                  if (data.spaceOwner == null) {
+                                    return Material(
+                                        type: MaterialType.transparency,
+                                        child: InkWell(
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  RouteGenerator
+                                                      .configureSpaceStaff);
+                                            },
+                                            child:
+                                                const Text("Configure space")));
+                                  } else {
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.white.withOpacity(0.5),
+                                              Colors.white.withOpacity(0.2)
                                             ],
-                                          ));
-                                })
+                                            begin:
+                                                AlignmentDirectional.topStart,
+                                            end: AlignmentDirectional.bottomEnd,
+                                          ),
+                                          border: Border.all(
+                                              width: 1.5,
+                                              color: Colors.white
+                                                  .withOpacity(0.2)),
+                                          color: whiteColor.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                  vertical: 10.h),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      "Your ${data.type}:",
+                                                      style: CustomTheme
+                                                              .mediumText(
+                                                                  context)
+                                                          .copyWith(
+                                                              color:
+                                                                  whiteColorShade2,
+                                                              fontFamily: GoogleFonts
+                                                                      .adamina()
+                                                                  .fontFamily,
+                                                              fontSize: 25.sp),
+                                                    ),
+                                                  ),
+                                                  Material(
+                                                    type: MaterialType
+                                                        .transparency,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        ref
+                                                            .watch(spaceProvider
+                                                                .notifier)
+                                                            .state = data;
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            RouteGenerator
+                                                                .configureSpaceStaff);
+                                                      },
+                                                      child: const Padding(
+                                                        padding:
+                                                            EdgeInsets.all(8.0),
+                                                        child: Icon(
+                                                          Icons.edit,
+                                                          color:
+                                                              whiteColorShade2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                  vertical: 5.h),
+                                              child: Text(
+                                                "4.5kva",
+                                                style: CustomTheme.largeText(
+                                                        context)
+                                                    .copyWith(
+                                                        color: whiteColorShade2,
+                                                        fontFamily: GoogleFonts
+                                                                .adamina()
+                                                            .fontFamily,
+                                                        fontSize: 30.sp),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                  vertical: 10.h),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        data.spaceOwner!,
+                                                        style: CustomTheme
+                                                                .mediumText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    25.sp),
+                                                      ),
+                                                      Text(
+                                                        "Fans",
+                                                        style: CustomTheme
+                                                                .normalText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    15.sp),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        data.spaceOwner!,
+                                                        style: CustomTheme
+                                                                .mediumText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    25.sp),
+                                                      ),
+                                                      Text(
+                                                        "Air Conditioners",
+                                                        style: CustomTheme
+                                                                .normalText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    15.sp),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        data.spaceOwner!,
+                                                        style: CustomTheme
+                                                                .mediumText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    25.sp),
+                                                      ),
+                                                      Text(
+                                                        "Bulbs",
+                                                        style: CustomTheme
+                                                                .normalText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    15.sp),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        data.spaceOwner!,
+                                                        style: CustomTheme
+                                                                .mediumText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    25.sp),
+                                                      ),
+                                                      Text(
+                                                        "Televisions",
+                                                        style: CustomTheme
+                                                                .normalText(
+                                                                    context)
+                                                            .copyWith(
+                                                                color:
+                                                                    whiteColorShade2,
+                                                                fontFamily: GoogleFonts
+                                                                        .adamina()
+                                                                    .fontFamily,
+                                                                fontSize:
+                                                                    15.sp),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ));
+                                  }
+                                }),
+                            SizedBox(
+                              height: 300.h,
+                            ),
+                            Center(
+                                child: Text(
+                              "Need Help?",
+                              style: CustomTheme.normalText(context).copyWith(
+                                  color: whiteColorShade2,
+                                  fontFamily: GoogleFonts.adamina().fontFamily,
+                                  fontSize: 15.sp),
+                            )),
+                            SizedBox(
+                              height: 5.h,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 125.w),
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  onTap: () {},
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.white.withOpacity(0.5),
+                                          Colors.white.withOpacity(0.2)
+                                        ],
+                                        begin: AlignmentDirectional.topStart,
+                                        end: AlignmentDirectional.bottomEnd,
+                                      ),
+                                      border: Border.all(
+                                          width: 1.5,
+                                          color: Colors.white.withOpacity(0.2)),
+                                      color: whiteColor.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.h),
+                                      child: Icon(
+                                        Icons.chat,
+                                        color: whiteColorShade2,
+                                        size: 30.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ));
-            }));
+                ));
+              });
+        }));
   }
 }
