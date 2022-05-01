@@ -125,6 +125,7 @@ class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
                           ref.watch(storageProvider).editAdminSpace(
                               context,
                               Space(
+                                  dateAdded:ref.watch(spaceProvider)!.dateAdded,
                                   type: aliasController.text,
                                   sId: ref.watch(spaceProvider)!.sId,
                                   spaceOwner:

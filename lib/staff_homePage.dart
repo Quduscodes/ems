@@ -291,7 +291,9 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                 type: MaterialType.transparency,
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.pushNamed(context, RouteGenerator.staffLifeChat);
+                                  },
                                   child: Container(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(

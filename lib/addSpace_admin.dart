@@ -161,6 +161,7 @@ class _AddAdminSpaceState extends ConsumerState<AddAdminSpace> {
                                           ref.watch(storageProvider).addAdminSpace(
                                               context,
                                               Space(
+                                                  dateAdded:DateTime.now().toString(),
                                                   type: aliasController.text,
                                                   sId: id,
                                                   spaceOwner:

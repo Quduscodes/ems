@@ -161,6 +161,8 @@ class _ConfigureSpaceStaff extends State<ConfigureSpaceStaff> {
                                           ref.watch(storageProvider).addUserSpace(
                                               context,
                                               Space(
+                                                  dateAdded:
+                                                      DateTime.now().toString(),
                                                   type: aliasController.text,
                                                   sId: id,
                                                   spaceOwner:

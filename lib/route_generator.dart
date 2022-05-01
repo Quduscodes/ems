@@ -1,4 +1,7 @@
+import 'admin_liveChat.dart';
+import 'chat_window.dart';
 import 'exports.dart';
+import 'help_support.dart';
 
 class RouteGenerator {
   static const String loginStaff = "/loginStaff";
@@ -17,12 +20,19 @@ class RouteGenerator {
   static const String editAdminSpace = "/editAdminSpace";
   static const String addAdminSpace = "/addAdminSpace";
   static const String editSpaceStaff = "/editSpaceStaff";
+  static const String staffLifeChat = "/staffLifeChat";
+  static const String adminLiveChat = "/adminLiveChat";
+  static const String helpAndSupport = "/helpAndSuport";
   static const String splash = "/";
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const Splash());
+      case staffLifeChat:
+        return MaterialPageRoute(builder: (_) => const LiveChatScreen());
+      case helpAndSupport:
+        return MaterialPageRoute(builder: (_) => const HelpAndSupport());
       case onboarding:
         return MaterialPageRoute(builder: (_) => const Onboarding());
       case staffHome:
@@ -47,6 +57,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const AddAdminSpace());
       case editSpaceStaff:
         return MaterialPageRoute(builder: (_) => const EditSpaceStaff());
+      case adminLiveChat:
+        return MaterialPageRoute(builder: (_) => const AdminLiveChatScreen());
     }
   }
 }

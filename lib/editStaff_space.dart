@@ -126,6 +126,8 @@ class _EditSpaceStaff extends ConsumerState<EditSpaceStaff> {
                           ref.watch(storageProvider).editUserSpace(
                               context,
                               Space(
+                                  dateAdded:
+                                      ref.watch(spaceProvider)!.dateAdded,
                                   type: aliasController.text,
                                   sId: ref.watch(spaceProvider)!.sId,
                                   spaceOwner:

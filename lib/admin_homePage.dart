@@ -359,7 +359,72 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+                            Container(
+                              width: 50.w,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.white.withOpacity(0.5),
+                                    Colors.white.withOpacity(0.2)
+                                  ],
+                                  begin: AlignmentDirectional.topStart,
+                                  end: AlignmentDirectional.bottomEnd,
+                                ),
+                                border: Border.all(
+                                    width: 1.5,
+                                    color: Colors.white.withOpacity(0.2)),
+                                color: whiteColor.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, RouteGenerator.helpAndSupport);
+                                  },
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10.w, vertical: 10.h),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Help & Support",
+                                          style: CustomTheme.mediumText(context)
+                                              .copyWith(
+                                                  color: whiteColorShade2,
+                                                  fontSize: 25.sp),
+                                        ),
+                                        SizedBox(
+                                          height: 5.h,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "View All",
+                                              style: CustomTheme.mediumText(
+                                                      context)
+                                                  .copyWith(
+                                                      color: whiteColorShade2,
+                                                      fontSize: 15.sp),
+                                            ),
+                                            Icon(
+                                              Icons.navigate_next,
+                                              color: whiteColorShade2,
+                                              size: 15.sp,
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
