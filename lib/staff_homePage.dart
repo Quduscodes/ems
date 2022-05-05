@@ -160,18 +160,40 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                         .spaceBetween,
                                                 children: [
                                                   Expanded(
-                                                    child: Text(
-                                                      "Your ${data.type}:",
-                                                      style: CustomTheme
-                                                              .mediumText(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "${data.type}:",
+                                                          style: CustomTheme.mediumText(
                                                                   context)
-                                                          .copyWith(
-                                                              color:
-                                                                  whiteColorShade2,
-                                                              fontFamily: GoogleFonts
-                                                                      .adamina()
-                                                                  .fontFamily,
-                                                              fontSize: 25.sp),
+                                                              .copyWith(
+                                                                  color:
+                                                                      whiteColorShade2,
+                                                                  fontFamily: GoogleFonts
+                                                                          .adamina()
+                                                                      .fontFamily,
+                                                                  fontSize:
+                                                                      25.sp),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5.h,
+                                                        ),
+                                                        Text(
+                                                          "📍 ${data.location}",
+                                                          style: CustomTheme
+                                                                  .mediumText(
+                                                                      context)
+                                                              .copyWith(
+                                                                  color:
+                                                                      whiteColorShade2,
+                                                                  fontFamily: GoogleFonts
+                                                                          .adamina()
+                                                                      .fontFamily),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                   Material(
@@ -231,40 +253,37 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                 child: Row(
                                                   children: data.appliances!
                                                       .map((e) => Padding(
-                                                        padding:  EdgeInsets.symmetric(horizontal: 5.w),
-                                                        child: Column(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.w),
+                                                            child: Column(
                                                               children: [
                                                                 Text(
                                                                   e.quantity!,
-                                                                  style: CustomTheme
-                                                                          .mediumText(
-                                                                              context)
-                                                                      .copyWith(
-                                                                          color:
-                                                                              whiteColorShade2,
-                                                                          fontFamily:
-                                                                              GoogleFonts.adamina()
-                                                                                  .fontFamily,
-                                                                          fontSize:
-                                                                              25.sp),
+                                                                  style: CustomTheme.mediumText(context).copyWith(
+                                                                      color:
+                                                                          whiteColorShade2,
+                                                                      fontFamily:
+                                                                          GoogleFonts.adamina()
+                                                                              .fontFamily,
+                                                                      fontSize:
+                                                                          25.sp),
                                                                 ),
                                                                 Text(
                                                                   e.applianceName!,
-                                                                  style: CustomTheme
-                                                                          .normalText(
-                                                                              context)
-                                                                      .copyWith(
-                                                                          color:
-                                                                              whiteColorShade2,
-                                                                          fontFamily:
-                                                                              GoogleFonts.adamina()
-                                                                                  .fontFamily,
-                                                                          fontSize:
-                                                                              15.sp),
+                                                                  style: CustomTheme.normalText(context).copyWith(
+                                                                      color:
+                                                                          whiteColorShade2,
+                                                                      fontFamily:
+                                                                          GoogleFonts.adamina()
+                                                                              .fontFamily,
+                                                                      fontSize:
+                                                                          15.sp),
                                                                 )
                                                               ],
                                                             ),
-                                                      ))
+                                                          ))
                                                       .toList(),
                                                 )),
                                           ],
@@ -292,7 +311,8 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(10.0),
                                   onTap: () {
-                                    Navigator.pushNamed(context, RouteGenerator.staffLifeChat);
+                                    Navigator.pushNamed(
+                                        context, RouteGenerator.staffLifeChat);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(

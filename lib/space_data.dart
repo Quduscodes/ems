@@ -22,8 +22,9 @@ class Space {
   String? type;
   String? spaceOwner;
   String? dateAdded;
+  String? location;
 
-  Space({this.appliances, this.sId, this.type, this.spaceOwner, required this.dateAdded});
+  Space({this.appliances, this.sId, this.type, this.spaceOwner, required this.dateAdded, required this.location});
 
   Space.fromJson(Map<String, dynamic> json) {
     if (json['appliances'] != null) {
@@ -36,6 +37,7 @@ class Space {
     dateAdded = json['dateAdded'];
     type = json['type'];
     spaceOwner = json['spaceOwner'];
+    location = json['location'];
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +46,7 @@ class Space {
       data['appliances'] = appliances!.map((v) => v.toJson()).toList();
     }
     data['_id'] = sId;
+    data['location'] = location;
     data['dateAdded'] = dateAdded;
     data['type'] = type;
     data['spaceOwner'] = spaceOwner;

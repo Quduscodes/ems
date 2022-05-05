@@ -1,5 +1,7 @@
 import 'package:ems/exports.dart';
 
+import 'custom_dropdown.dart';
+
 class EditAdminSpace extends ConsumerStatefulWidget {
   const EditAdminSpace({Key? key}) : super(key: key);
 
@@ -9,6 +11,7 @@ class EditAdminSpace extends ConsumerStatefulWidget {
 
 class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
   TextEditingController aliasController = TextEditingController();
+  String selectedLocation = "";
 
   final UserData? user =
       Hive.box<UserData>(StringConst.userDataBox).get(StringConst.userDataKey);
@@ -18,9 +21,12 @@ class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
     super.initState();
     Future.delayed(Duration.zero, () {
       aliasController.text = ref.watch(spaceProvider)!.type ?? '';
+      selectedLocation = ref.watch(spaceProvider)!.location ?? '';
     });
   }
 
+  final CollectionReference _locationFirestore =
+      FirebaseFirestore.instance.collection('locations');
   List<Appliances> globalAppliances = [];
   @override
   Widget build(BuildContext context) {
@@ -76,6 +82,48 @@ class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
                             SizedBox(
                               height: 10.h,
                             ),
+                            StreamBuilder<DocumentSnapshot>(
+                                stream: _locationFirestore
+                                    .doc("locations")
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                primaryColor),
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Text("Something went wrong");
+                                  }
+                                  if (!snapshot.data!.exists) {
+                                    return const Text(
+                                        "No Locations have been added yet");
+                                  }
+                                  List location =
+                                      snapshot.data!["location"] as List;
+                                  List<String> locations = location
+                                      .map((e) => e.toString())
+                                      .toList();
+                                  return CustomDropdown(
+                                    items: locations,
+                                    title: 'Select Location',
+                                    value: selectedLocation.isNotEmpty
+                                        ? selectedLocation
+                                        : locations[0],
+                                    onChanged: (val) {
+                                      setState(() {
+                                        selectedLocation = val;
+                                      });
+                                    },
+                                  );
+                                }),
+                            SizedBox(
+                              height: 10.h,
+                            ),
                             ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: ref
@@ -125,8 +173,10 @@ class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
                           ref.watch(storageProvider).editAdminSpace(
                               context,
                               Space(
-                                  dateAdded:ref.watch(spaceProvider)!.dateAdded,
+                                  dateAdded:
+                                      ref.watch(spaceProvider)!.dateAdded,
                                   type: aliasController.text,
+                                  location: selectedLocation,
                                   sId: ref.watch(spaceProvider)!.sId,
                                   spaceOwner:
                                       "${box.get(StringConst.userDataKey)!.lastName!} ${box.get(StringConst.userDataKey)!.firstName!}",
@@ -136,7 +186,7 @@ class _EditAdminSpaceState extends ConsumerState<EditAdminSpace> {
                         borderColor: greenTextColor,
                         children: <Widget>[
                           Text(
-                            "Edit Space",
+                            "Done",
                             style: CustomTheme.normalText(context).copyWith(
                               color: greenTextColor,
                             ),

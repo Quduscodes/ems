@@ -8,6 +8,8 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
+  String totalSpaceDuration = StringConst.today;
+
   final CollectionReference _fireStore =
       FirebaseFirestore.instance.collection('admin');
   final CollectionReference _spaceFireStore =
@@ -96,10 +98,42 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                     return const Text("No Space yet");
                                   }
                                   List space = snapshot.data!.docs;
-                                  List<Space> spaces = space
-                                      .map((e) =>
-                                          Space.fromJson(e.data()['space']))
-                                      .toList();
+                                  List<Space> spaces = [];
+                                  if (totalSpaceDuration ==
+                                      StringConst.last7Days) {
+                                    spaces = space
+                                        .map((e) =>
+                                            Space.fromJson(e.data()['space']))
+                                        .toList()
+                                        .where((element) =>
+                                            DateTime.parse(element.dateAdded!)
+                                                .day ==
+                                            DateTime.now().day - 7)
+                                        .toList();
+                                  } else if (totalSpaceDuration ==
+                                      StringConst.last14Days) {
+                                    spaces = space
+                                        .map((e) =>
+                                            Space.fromJson(e.data()['space']))
+                                        .toList()
+                                        .where((element) =>
+                                            element.dateAdded == "")
+                                        .toList();
+                                  } else if (totalSpaceDuration ==
+                                      StringConst.last30Days) {
+                                    spaces = space
+                                        .map((e) =>
+                                            Space.fromJson(e.data()['space']))
+                                        .toList()
+                                        .where((element) =>
+                                            element.dateAdded == "")
+                                        .toList();
+                                  } else {
+                                    spaces = space
+                                        .map((e) =>
+                                            Space.fromJson(e.data()['space']))
+                                        .toList();
+                                  }
                                   int? totalRating = 0;
                                   for (Space space in spaces) {
                                     for (Appliances appliance
@@ -109,6 +143,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                   int.tryParse(
                                                       appliance.quantity!)! +
                                               totalRating!;
+                                      // Map<String, String>
+                                      // List<Map<String, String>> items = [];
+                                      // items.add({
+                                      //   appliance.applianceName!:
+                                      //       appliance.quantity!
+                                      // });
                                     }
                                   }
                                   return Container(
@@ -132,7 +172,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                     child: Column(
                                       children: [
                                         Text(
-                                          "Total estimate",
+                                          "All spaces: Total estimate",
                                           style: CustomTheme.normalText(context)
                                               .copyWith(
                                             color: whiteColorShade2,
@@ -224,7 +264,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                         child: Column(
                                           children: [
                                             Text(
-                                              "Total estimate",
+                                              "Your Space: Total estimate",
                                               style: CustomTheme.normalText(
                                                       context)
                                                   .copyWith(
@@ -249,40 +289,53 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                           shrinkWrap: true,
                                           itemCount: spaces.length,
                                           itemBuilder: (context, index) {
-                                            return Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            return Column(
                                               children: [
-                                                InkWell(
-                                                    onTap: () {},
-                                                    child: Text(spaces[index]
-                                                        .type
-                                                        .toString())),
-                                                InkWell(
-                                                    onTap: () {
-                                                      ref
-                                                          .watch(
-                                                              spaceListProvider
-                                                                  .notifier)
-                                                          .state = spaces;
-                                                      ref
-                                                          .watch(indexProvider
-                                                              .notifier)
-                                                          .state = index;
-                                                      ref
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    InkWell(
+                                                        onTap: () {},
+                                                        child: Text(
+                                                            spaces[index]
+                                                                .type
+                                                                .toString())),
+                                                    InkWell(
+                                                        onTap: () {
+                                                          ref
+                                                              .watch(
+                                                                  spaceListProvider
+                                                                      .notifier)
+                                                              .state = spaces;
+                                                          ref
+                                                              .watch(
+                                                                  indexProvider
+                                                                      .notifier)
+                                                              .state = index;
+                                                          ref
                                                               .watch(
                                                                   spaceProvider
                                                                       .notifier)
-                                                              .state =
-                                                          spaces[index];
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          RouteGenerator
-                                                              .editAdminSpace);
-                                                    },
-                                                    child:
-                                                        const Icon(Icons.edit))
+                                                              .state = spaces[index];
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              RouteGenerator
+                                                                  .editAdminSpace);
+                                                        },
+                                                        child: const Icon(
+                                                            Icons.edit))
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.location_on),
+                                                    Text(spaces[index]
+                                                            .location ??
+                                                        "")
+                                                  ],
+                                                )
                                               ],
                                             );
                                           }),
@@ -360,70 +413,148 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                 ),
                               ),
                             ),
-                            Container(
-                              width: 50.w,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white.withOpacity(0.5),
-                                    Colors.white.withOpacity(0.2)
-                                  ],
-                                  begin: AlignmentDirectional.topStart,
-                                  end: AlignmentDirectional.bottomEnd,
-                                ),
-                                border: Border.all(
-                                    width: 1.5,
-                                    color: Colors.white.withOpacity(0.2)),
-                                color: whiteColor.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Material(
-                                type: MaterialType.transparency,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, RouteGenerator.helpAndSupport);
-                                  },
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.w, vertical: 10.h),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Help & Support",
-                                          style: CustomTheme.mediumText(context)
-                                              .copyWith(
-                                                  color: whiteColorShade2,
-                                                  fontSize: 25.sp),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.white.withOpacity(0.5),
+                                          Colors.white.withOpacity(0.2)
+                                        ],
+                                        begin: AlignmentDirectional.topStart,
+                                        end: AlignmentDirectional.bottomEnd,
+                                      ),
+                                      border: Border.all(
+                                          width: 1.5,
+                                          color: Colors.white.withOpacity(0.2)),
+                                      color: whiteColor.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Material(
+                                      type: MaterialType.transparency,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              RouteGenerator.helpAndSupport);
+                                        },
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 10.h),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Help & Support",
+                                                style: CustomTheme.mediumText(
+                                                        context)
+                                                    .copyWith(
+                                                        color: whiteColorShade2,
+                                                        fontSize: 25.sp),
+                                              ),
+                                              SizedBox(
+                                                height: 5.h,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "View All",
+                                                    style: CustomTheme
+                                                            .mediumText(context)
+                                                        .copyWith(
+                                                            color:
+                                                                whiteColorShade2,
+                                                            fontSize: 15.sp),
+                                                  ),
+                                                  Icon(
+                                                    Icons.navigate_next,
+                                                    color: whiteColorShade2,
+                                                    size: 15.sp,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(
-                                          height: 5.h,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "View All",
-                                              style: CustomTheme.mediumText(
-                                                      context)
-                                                  .copyWith(
-                                                      color: whiteColorShade2,
-                                                      fontSize: 15.sp),
-                                            ),
-                                            Icon(
-                                              Icons.navigate_next,
-                                              color: whiteColorShade2,
-                                              size: 15.sp,
-                                            )
-                                          ],
-                                        )
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                SizedBox(width: 10.w),
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.white.withOpacity(0.5),
+                                          Colors.white.withOpacity(0.2)
+                                        ],
+                                        begin: AlignmentDirectional.topStart,
+                                        end: AlignmentDirectional.bottomEnd,
+                                      ),
+                                      border: Border.all(
+                                          width: 1.5,
+                                          color: Colors.white.withOpacity(0.2)),
+                                      color: whiteColor.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Material(
+                                      type: MaterialType.transparency,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              RouteGenerator.locations);
+                                        },
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 10.h),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Locations",
+                                                style: CustomTheme.mediumText(
+                                                        context)
+                                                    .copyWith(
+                                                        color: whiteColorShade2,
+                                                        fontSize: 25.sp),
+                                              ),
+                                              SizedBox(
+                                                height: 5.h,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "View All",
+                                                    style: CustomTheme
+                                                            .mediumText(context)
+                                                        .copyWith(
+                                                            color:
+                                                                whiteColorShade2,
+                                                            fontSize: 15.sp),
+                                                  ),
+                                                  Icon(
+                                                    Icons.navigate_next,
+                                                    color: whiteColorShade2,
+                                                    size: 15.sp,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

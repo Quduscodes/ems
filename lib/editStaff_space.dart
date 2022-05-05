@@ -1,5 +1,7 @@
 import 'package:ems/exports.dart';
 
+import 'custom_dropdown.dart';
+
 class EditSpaceStaff extends ConsumerStatefulWidget {
   const EditSpaceStaff({Key? key}) : super(key: key);
 
@@ -9,6 +11,7 @@ class EditSpaceStaff extends ConsumerStatefulWidget {
 
 class _EditSpaceStaff extends ConsumerState<EditSpaceStaff> {
   TextEditingController aliasController = TextEditingController();
+  String selectedLocation = "";
 
   final UserData? user =
       Hive.box<UserData>(StringConst.userDataBox).get(StringConst.userDataKey);
@@ -18,9 +21,12 @@ class _EditSpaceStaff extends ConsumerState<EditSpaceStaff> {
     super.initState();
     Future.delayed(Duration.zero, () {
       aliasController.text = ref.watch(spaceProvider)!.type ?? '';
+      selectedLocation = ref.watch(spaceProvider)!.location ?? '';
     });
   }
 
+  final CollectionReference _locationFirestore =
+      FirebaseFirestore.instance.collection('locations');
   List<Appliances> globalAppliances = [];
 
   @override
@@ -77,6 +83,51 @@ class _EditSpaceStaff extends ConsumerState<EditSpaceStaff> {
                             SizedBox(
                               height: 10.h,
                             ),
+                            StreamBuilder<DocumentSnapshot>(
+                                stream: _locationFirestore
+                                    .doc("locations")
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                primaryColor),
+                                      ),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Text("Something went wrong");
+                                  }
+                                  if (!snapshot.data!.exists) {
+                                    return const Text(
+                                        "No Locations have been added yet");
+                                  }
+                                  List location =
+                                      snapshot.data!["location"] as List;
+                                  List<String> locations = location
+                                      .map((e) => e.toString())
+                                      .toList();
+                                  return CustomDropdown(
+                                    items: locations,
+                                    title: 'Select Location',
+                                    value: selectedLocation.isNotEmpty
+                                        ? selectedLocation
+                                        : locations[0],
+                                    onChanged: (val) {
+                                      setState(() {
+                                        selectedLocation = val;
+                                      });
+                                    },
+                                  );
+                                }),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
                             ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: ref
@@ -126,6 +177,7 @@ class _EditSpaceStaff extends ConsumerState<EditSpaceStaff> {
                           ref.watch(storageProvider).editUserSpace(
                               context,
                               Space(
+                                  location: selectedLocation,
                                   dateAdded:
                                       ref.watch(spaceProvider)!.dateAdded,
                                   type: aliasController.text,

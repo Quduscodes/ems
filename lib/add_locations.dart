@@ -1,18 +1,17 @@
 import 'package:ems/exports.dart';
 
-class AppliancesView extends StatefulWidget {
-  const AppliancesView({Key? key}) : super(key: key);
+class LocationsView extends StatefulWidget {
+  const LocationsView({Key? key}) : super(key: key);
 
   @override
-  State<AppliancesView> createState() => _AppliancesViewState();
+  State<LocationsView> createState() => _LocationsViewState();
 }
 
-class _AppliancesViewState extends State<AppliancesView> {
+class _LocationsViewState extends State<LocationsView> {
   final CollectionReference _fireStore =
-      FirebaseFirestore.instance.collection('appliances');
+      FirebaseFirestore.instance.collection('locations');
 
-  final TextEditingController applianceController = TextEditingController();
-  final TextEditingController ratingController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -64,7 +63,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                 ),
                               ),
                               Text(
-                                'Appliances',
+                                'Locations',
                                 style: TextStyle(
                                   color: blackTextColor,
                                   fontSize: 16.sp,
@@ -82,7 +81,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                             children: [
                               StreamBuilder<DocumentSnapshot>(
                                   stream:
-                                      _fireStore.doc("appliances").snapshots(),
+                                      _fireStore.doc("locations").snapshots(),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
                                       return const Center(
@@ -97,14 +96,169 @@ class _AppliancesViewState extends State<AppliancesView> {
                                       return const Text("Something went wrong");
                                     }
                                     if (!snapshot.data!.exists) {
-                                      return const Text("No Space yet");
+                                      return Column(
+                                        children: [
+                                          const Text(
+                                              "No Locations have been added yet"),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 24.w,
+                                                vertical: 10.h),
+                                            child: CustomBorderButton(
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                    context: context,
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    isScrollControlled: true,
+                                                    builder: (context) {
+                                                      return Padding(
+                                                        padding: MediaQuery.of(
+                                                                context)
+                                                            .viewInsets,
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      24.w,
+                                                                  vertical:
+                                                                      30.h),
+                                                          decoration: const BoxDecoration(
+                                                              borderRadius: BorderRadius.only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          20),
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          20)),
+                                                              color:
+                                                                  whiteColor),
+                                                          height: 400.h,
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                  "Add Location",
+                                                                  style: CustomTheme
+                                                                          .mediumText(
+                                                                              context)
+                                                                      .copyWith()),
+                                                              SizedBox(
+                                                                height: 20.h,
+                                                              ),
+                                                              Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      "Location Name:",
+                                                                      style: CustomTheme.normalText(
+                                                                              context)
+                                                                          .copyWith(),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width: 200
+                                                                            .w,
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                locationController,
+                                                                            decoration:
+                                                                                const InputDecoration(
+                                                                              border: InputBorder.none,
+                                                                            ),
+                                                                          ),
+                                                                        ))
+                                                                  ]),
+                                                              SizedBox(
+                                                                height: 20.h,
+                                                              ),
+                                                              const Expanded(
+                                                                child:
+                                                                    SizedBox(),
+                                                              ),
+                                                              CustomBorderButton(
+                                                                onPressed: () {
+                                                                  ref
+                                                                      .watch(
+                                                                          storageProvider)
+                                                                      .addLocation(
+                                                                          context,
+                                                                          locationController
+                                                                              .text);
+                                                                },
+                                                                color:
+                                                                    whiteColor,
+                                                                borderColor:
+                                                                    greenTextColor,
+                                                                children: <
+                                                                    Widget>[
+                                                                  Text(
+                                                                    "Add",
+                                                                    style: CustomTheme.normalText(
+                                                                            context)
+                                                                        .copyWith(
+                                                                      color:
+                                                                          greenTextColor,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                        10.0.w,
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons
+                                                                        .add_rounded,
+                                                                    color:
+                                                                        greenTextColor,
+                                                                    size: 25.sp,
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 20.h,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    });
+                                              },
+                                              color: whiteColor,
+                                              borderColor: greenTextColor,
+                                              children: <Widget>[
+                                                Text(
+                                                  "Add New",
+                                                  style: CustomTheme.normalText(
+                                                          context)
+                                                      .copyWith(
+                                                    color: greenTextColor,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 5.0.w,
+                                                ),
+                                                Icon(
+                                                  Icons.add_rounded,
+                                                  color: greenTextColor,
+                                                  size: 25.sp,
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      );
                                     }
-                                    List appliance =
-                                        snapshot.data!["appliance"] as List;
-                                    List<Appliances> appliances = appliance
-                                        .map((e) => Appliances.fromJson(e))
+                                    List location =
+                                        snapshot.data!["location"] as List;
+                                    List<String> locations = location
+                                        .map((e) => e.toString())
                                         .toList();
-                                    if (appliance.isEmpty) {
+                                    if (location.isEmpty) {
                                       return Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 24.w, vertical: 10.h),
@@ -138,7 +292,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                       height: 400.h,
                                                       child: Column(
                                                         children: [
-                                                          Text("Add Appliance",
+                                                          Text("Add Location",
                                                               style: CustomTheme
                                                                       .mediumText(
                                                                           context)
@@ -152,7 +306,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                       .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  "Appliance Name:",
+                                                                  "Location Name:",
                                                                   style: CustomTheme
                                                                           .normalText(
                                                                               context)
@@ -169,7 +323,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                       child:
                                                                           TextField(
                                                                         controller:
-                                                                            applianceController,
+                                                                            locationController,
                                                                         decoration:
                                                                             const InputDecoration(
                                                                           border:
@@ -181,56 +335,18 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                           SizedBox(
                                                             height: 20.h,
                                                           ),
-                                                          Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Appliance Rating:",
-                                                                  style: CustomTheme
-                                                                          .normalText(
-                                                                              context)
-                                                                      .copyWith(),
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        200.w,
-                                                                    child:
-                                                                        Container(
-                                                                      decoration:
-                                                                          const BoxDecoration(
-                                                                              border: Border(bottom: BorderSide(color: blackColor))),
-                                                                      child:
-                                                                          TextField(
-                                                                        controller:
-                                                                            ratingController,
-                                                                        decoration:
-                                                                            const InputDecoration(
-                                                                          border:
-                                                                              InputBorder.none,
-                                                                        ),
-                                                                      ),
-                                                                    ))
-                                                              ]),
                                                           const Expanded(
                                                             child: SizedBox(),
                                                           ),
                                                           CustomBorderButton(
                                                             onPressed: () {
-                                                              final String id =
-                                                                  DateTime.now()
-                                                                      .microsecondsSinceEpoch
-                                                                      .toString();
-                                                              ref.watch(storageProvider).addAppliance(
-                                                                  context,
-                                                                  Appliances(
-                                                                      sId: id,
-                                                                      applianceName:
-                                                                          applianceController
-                                                                              .text,
-                                                                      rating: ratingController
-                                                                          .text));
+                                                              ref
+                                                                  .watch(
+                                                                      storageProvider)
+                                                                  .addLocation(
+                                                                      context,
+                                                                      locationController
+                                                                          .text);
                                                             },
                                                             color: whiteColor,
                                                             borderColor:
@@ -294,7 +410,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                       children: [
                                         ListView.builder(
                                             shrinkWrap: true,
-                                            itemCount: appliances.length,
+                                            itemCount: locations.length,
                                             itemBuilder: (context, index) {
                                               return Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -304,181 +420,20 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Expanded(
-                                                      child: Row(
-                                                        children: [
-                                                          Text(appliances[index]
-                                                              .applianceName
-                                                              .toString()),
-                                                          SizedBox(
-                                                            width: 10.w,
-                                                          ),
-                                                          Text(appliances[index]
-                                                              .rating
-                                                              .toString()),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                    Text(locations[index]),
                                                     InkWell(
                                                         onTap: () {
                                                           ref
                                                               .watch(
                                                                   storageProvider
                                                                       .notifier)
-                                                              .deleteAppliance(
+                                                              .deleteLocation(
                                                                   context,
-                                                                  appliances[
+                                                                  locations[
                                                                       index]);
                                                         },
                                                         child: const Icon(
                                                             Icons.delete)),
-                                                    SizedBox(
-                                                      width: 10.w,
-                                                    ),
-                                                    InkWell(
-                                                        onTap: () {
-                                                          Appliances appliance =
-                                                              appliances[index];
-                                                          ratingController
-                                                                  .text =
-                                                              appliance.rating!;
-                                                          applianceController
-                                                                  .text =
-                                                              appliance
-                                                                  .applianceName!;
-                                                          showModalBottomSheet(
-                                                              context: context,
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              isScrollControlled:
-                                                                  true,
-                                                              builder:
-                                                                  (context) {
-                                                                return Padding(
-                                                                  padding: MediaQuery.of(
-                                                                          context)
-                                                                      .viewInsets,
-                                                                  child:
-                                                                      Container(
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        horizontal: 24
-                                                                            .w,
-                                                                        vertical:
-                                                                            30.h),
-                                                                    decoration: const BoxDecoration(
-                                                                        borderRadius: BorderRadius.only(
-                                                                            topRight: Radius.circular(
-                                                                                20),
-                                                                            topLeft: Radius.circular(
-                                                                                20)),
-                                                                        color:
-                                                                            whiteColor),
-                                                                    height:
-                                                                        400.h,
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Text(
-                                                                            "Edit Appliance",
-                                                                            style:
-                                                                                CustomTheme.mediumText(context).copyWith()),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              20.h,
-                                                                        ),
-                                                                        Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Text(
-                                                                                "Appliance Name:",
-                                                                                style: CustomTheme.normalText(context).copyWith(),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                  width: 200.w,
-                                                                                  child: Container(
-                                                                                    decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
-                                                                                    child: TextField(
-                                                                                      controller: applianceController,
-                                                                                      decoration: const InputDecoration(
-                                                                                        border: InputBorder.none,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ))
-                                                                            ]),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              20.h,
-                                                                        ),
-                                                                        Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Text(
-                                                                                "Appliance Rating:",
-                                                                                style: CustomTheme.normalText(context).copyWith(),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                  width: 200.w,
-                                                                                  child: Container(
-                                                                                    decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
-                                                                                    child: TextField(
-                                                                                      controller: ratingController,
-                                                                                      decoration: const InputDecoration(
-                                                                                        border: InputBorder.none,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ))
-                                                                            ]),
-                                                                        const Expanded(
-                                                                          child:
-                                                                              SizedBox(),
-                                                                        ),
-                                                                        CustomBorderButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            ref.watch(applianceDataListProvider.notifier).state =
-                                                                                appliances;
-                                                                            ref.watch(storageProvider).editAppliance(
-                                                                                context,
-                                                                                Appliances(applianceName: applianceController.text, rating: ratingController.text, sId: appliance.sId),
-                                                                                index);
-                                                                          },
-                                                                          color:
-                                                                              whiteColor,
-                                                                          borderColor:
-                                                                              greenTextColor,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Text(
-                                                                              "Edit",
-                                                                              style: CustomTheme.normalText(context).copyWith(
-                                                                                color: greenTextColor,
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 10.0.w,
-                                                                            ),
-                                                                            Icon(
-                                                                              Icons.add_rounded,
-                                                                              color: greenTextColor,
-                                                                              size: 25.sp,
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              20.h,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              });
-                                                        },
-                                                        child: const Icon(
-                                                            Icons.edit))
                                                   ],
                                                 ),
                                               );
@@ -516,8 +471,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                         height: 400.h,
                                                         child: Column(
                                                           children: [
-                                                            Text(
-                                                                "Add Appliance",
+                                                            Text("Add Location",
                                                                 style: CustomTheme
                                                                         .mediumText(
                                                                             context)
@@ -531,7 +485,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    "Appliance Name:",
+                                                                    "Location Name:",
                                                                     style: CustomTheme.normalText(
                                                                             context)
                                                                         .copyWith(),
@@ -546,40 +500,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                         child:
                                                                             TextField(
                                                                           controller:
-                                                                              applianceController,
-                                                                          decoration:
-                                                                              const InputDecoration(
-                                                                            border:
-                                                                                InputBorder.none,
-                                                                          ),
-                                                                        ),
-                                                                      ))
-                                                                ]),
-                                                            SizedBox(
-                                                              height: 20.h,
-                                                            ),
-                                                            Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    "Appliance Rating:",
-                                                                    style: CustomTheme.normalText(
-                                                                            context)
-                                                                        .copyWith(),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                          200.w,
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
-                                                                        child:
-                                                                            TextField(
-                                                                          controller:
-                                                                              ratingController,
+                                                                              locationController,
                                                                           decoration:
                                                                               const InputDecoration(
                                                                             border:
@@ -593,20 +514,13 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                             ),
                                                             CustomBorderButton(
                                                               onPressed: () {
-                                                                final String
-                                                                    id =
-                                                                    DateTime.now()
-                                                                        .microsecondsSinceEpoch
-                                                                        .toString();
-                                                                ref.watch(storageProvider).addAppliance(
-                                                                    context,
-                                                                    Appliances(
-                                                                        sId: id,
-                                                                        applianceName:
-                                                                            applianceController
-                                                                                .text,
-                                                                        rating:
-                                                                            ratingController.text));
+                                                                ref
+                                                                    .watch(
+                                                                        storageProvider)
+                                                                    .addLocation(
+                                                                        context,
+                                                                        locationController
+                                                                            .text);
                                                               },
                                                               color: whiteColor,
                                                               borderColor:

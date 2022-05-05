@@ -39,6 +39,25 @@ class StorageRepository extends ChangeNotifier {
     }).then((value) => Navigator.pop(context));
   }
 
+  addLocation(BuildContext context, String location) {
+    dropKeyboard(context);
+    var docRefAppliance =
+        FirebaseFirestore.instance.collection('locations').doc("locations");
+    docRefAppliance.get().then((value) {
+      if (value.exists) {
+        FirebaseFirestore.instance.runTransaction((transaction) async {
+          transaction.update(docRefAppliance, {
+            "location": FieldValue.arrayUnion([location])
+          });
+        });
+      } else {
+        docRefAppliance.set({
+          "location": FieldValue.arrayUnion([location])
+        });
+      }
+    }).then((value) => Navigator.pop(context));
+  }
+
   editAppliance(BuildContext context, Appliances appliance, int index) {
     ref.watch(applianceDataListProvider)![index] = appliance;
     var docRefAppliance =
@@ -58,6 +77,14 @@ class StorageRepository extends ChangeNotifier {
         FirebaseFirestore.instance.collection('appliances').doc("appliances");
     docRefAppliance.update({
       "appliance": FieldValue.arrayRemove([appliance.toJson()])
+    });
+  }
+
+  deleteLocation(BuildContext context, String location) {
+    var docRefAppliance =
+        FirebaseFirestore.instance.collection('locations').doc("locations");
+    docRefAppliance.update({
+      "location": FieldValue.arrayRemove([location])
     });
   }
 
