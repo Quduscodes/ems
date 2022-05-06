@@ -102,7 +102,8 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                   final Space data =
                                       Space.fromJson(snapshot.data!['space']);
                                   int? totalRating = 0;
-
+                                  Map<String, dynamic> appliances = {};
+                                  List<SubAppliance> subAppliances = [];
                                   if (data.spaceOwner != null) {
                                     for (Appliances appliance
                                         in data.appliances!) {
@@ -111,9 +112,28 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                   int.tryParse(
                                                       appliance.quantity!)! +
                                               totalRating!;
+                                      if (appliances.containsKey(
+                                          appliance.applianceName)) {
+                                        appliances[appliance.applianceName!]
+                                            ['quantity'] = int.parse(
+                                                appliance.quantity!) +
+                                            appliances[appliance.applianceName!]
+                                                ["quantity"]!;
+                                      } else {
+                                        appliances[appliance.applianceName!] = {
+                                          "rating": appliance.rating,
+                                          "quantity":
+                                              int.tryParse(appliance.quantity!)!
+                                        };
+                                      }
                                     }
                                   }
-
+                                  appliances.forEach((key, value) {
+                                    subAppliances.add(SubAppliance(
+                                        rating: value['rating'],
+                                        name: key,
+                                        quantity: value['quantity']));
+                                  });
                                   if (data.spaceOwner == null) {
                                     return Material(
                                         type: MaterialType.transparency,

@@ -1,5 +1,7 @@
 import 'package:ems/exports.dart';
 
+import 'admin_bottom.dart';
+
 class AdminRoutePath extends StatelessWidget {
   const AdminRoutePath({Key? key}) : super(key: key);
 
@@ -11,7 +13,7 @@ class AdminRoutePath extends StatelessWidget {
         builder: (context, Box<String> box, _) {
           debugPrint(box.get(StringConst.authState));
           if (box.get(StringConst.authState) != AuthState.LoggedIn.toString()) {
-            return const AdminHomePage();
+            return const BottomAppBarScreenAdmin();
           } else {
             return const Splash();
           }

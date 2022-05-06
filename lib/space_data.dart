@@ -16,6 +16,13 @@ class ApplianceModel {
   }
 }
 
+class SubAppliance {
+  String? name;
+  int? quantity;
+  String? rating;
+  SubAppliance({this.name, this.quantity, this.rating});
+}
+
 class Space {
   List<Appliances>? appliances;
   String? sId;
@@ -24,7 +31,13 @@ class Space {
   String? dateAdded;
   String? location;
 
-  Space({this.appliances, this.sId, this.type, this.spaceOwner, required this.dateAdded, required this.location});
+  Space(
+      {this.appliances,
+      this.sId,
+      this.type,
+      this.spaceOwner,
+      required this.dateAdded,
+      required this.location});
 
   Space.fromJson(Map<String, dynamic> json) {
     if (json['appliances'] != null) {
