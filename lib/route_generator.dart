@@ -3,6 +3,7 @@ import 'admin_bottom.dart';
 import 'admin_liveChat.dart';
 import 'chat_window.dart';
 import 'exports.dart';
+import 'extras.dart';
 import 'help_support.dart';
 
 class RouteGenerator {
@@ -26,6 +27,7 @@ class RouteGenerator {
   static const String adminLiveChat = "/adminLiveChat";
   static const String helpAndSupport = "/helpAndSupport";
   static const String locations = "/locations";
+  static const String extras = "/extras";
   static const String splash = "/";
   static const String bottomAppBarScreenAdmin = "bottomAppBarScreenAdmin";
 
@@ -38,6 +40,8 @@ class RouteGenerator {
       case bottomAppBarScreenAdmin:
         return MaterialPageRoute(
             builder: (_) => const BottomAppBarScreenAdmin());
+      case extras:
+        return MaterialPageRoute(builder: (_) => const Extras());
       case locations:
         return MaterialPageRoute(builder: (_) => const LocationsView());
       case helpAndSupport:

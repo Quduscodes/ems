@@ -1,9 +1,8 @@
 import 'package:ems/add_locations.dart';
 import 'package:ems/exports.dart';
 import 'package:ems/extensions.dart';
+import 'package:ems/extras.dart';
 import 'package:ems/stats.dart';
-
-import 'help_support.dart';
 
 class BottomAppBarScreenAdmin extends ConsumerStatefulWidget {
   const BottomAppBarScreenAdmin({Key? key}) : super(key: key);
@@ -106,6 +105,7 @@ class _BottomAppBarScreenVendorState
                                     bottomAppBarAsset![i].assetImage!,
                                     color: i == _page ? swatch6 : swatch22,
                                     fit: BoxFit.scaleDown,
+                                    height: 30.h,
                                   )),
                               SizedBox(
                                 height: 5.0.h,
@@ -136,7 +136,7 @@ class _BottomAppBarScreenVendorState
 
 List<Widget>? bottomAppBarScreens = [
   const AdminHomePage(),
-  const HelpAndSupport(),
+  const Extras(),
   const Stats(),
   const LocationsView(),
 ];
@@ -157,8 +157,8 @@ List<BottomAppBarAssetModel>? bottomAppBarAsset = [
     activeAssetImage: "activeDashboard",
   ),
   BottomAppBarAssetModel(
-    assetName: 'Orders',
-    assetImage: "home".svg,
+    assetName: 'EXTRAS',
+    assetImage: "settings".svg,
     activeAssetImage: "activeOrders",
   ),
   BottomAppBarAssetModel(

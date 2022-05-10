@@ -311,9 +311,6 @@ class _AddAdminSpaceState extends ConsumerState<AddAdminSpace> {
                                             ),
                                             CustomBorderButton(
                                               onPressed: () {
-                                                print(ref
-                                                    .watch(applianceList)![0]
-                                                    .toJson());
                                                 if (ref.watch(applianceList) !=
                                                     null) {
                                                   final String id = DateTime

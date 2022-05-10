@@ -59,6 +59,9 @@ class _StatsState extends State<Stats> {
                   ),
                   child: Column(
                     children: [
+                      SizedBox(
+                        height: 15.h,
+                      ),
                       Expanded(
                         child: ListView(
                           shrinkWrap: true,
