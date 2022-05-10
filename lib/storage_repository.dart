@@ -115,7 +115,8 @@ class StorageRepository extends ChangeNotifier {
   addUserSpace(BuildContext context, Space data) {
     var docRefUser =
         FirebaseFirestore.instance.collection('users').doc(user!.userId);
-    var docRefSpace = FirebaseFirestore.instance.collection('spaces').doc(data.sId);
+    var docRefSpace =
+        FirebaseFirestore.instance.collection('spaces').doc(data.sId);
     docRefSpace
         .set({
           "space": data.toJson(),

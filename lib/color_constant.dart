@@ -52,6 +52,7 @@ const Color swatch20 = Color(0xFFE96CDD);
 const Color swatch21 = Color(0xFF3AB4F5);
 const Color swatch22 = Color(0xFFA0A8BA);
 const Color swatch23 = Color(0xFF468CBB);
+const Color swatch24 = Color(0xFF3E4553);
 
 const Color darkerGreenTextColor = Color(0xff0E2A20);
 const Color darkGreyColor = Color(0xff4B4B4B);

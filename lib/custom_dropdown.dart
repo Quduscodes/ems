@@ -27,12 +27,22 @@ class CustomDropdown extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-                color: blackTextColor,
-                fontWeight: FontWeight.w400,
-                fontSize: 12.sp),
+            style: CustomTheme.normalText(context)
+                .copyWith(color: swatch12, fontWeight: FontWeight.w400),
           ),
           DropdownButton<String>(
+            selectedItemBuilder: (_) {
+              return items.map<Widget>((String item) {
+                return Center(
+                  child: Text(
+                    item,
+                    textAlign: TextAlign.start,
+                    style: CustomTheme.normalText(context).copyWith(
+                        color: whiteColor, fontWeight: FontWeight.w400),
+                  ),
+                );
+              }).toList();
+            },
             underline: Divider(
               thickness: 2.sp,
               color: greyTextColor,

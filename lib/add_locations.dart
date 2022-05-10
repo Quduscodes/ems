@@ -30,77 +30,234 @@ class _LocationsViewState extends State<LocationsView> {
                   Hive.box<UserData>(StringConst.userDataBox).listenable(),
               builder: (context, Box<UserData> box, _) {
                 return Scaffold(
+                    backgroundColor: swatch9,
                     body: SafeArea(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            left: 4.8.w,
-                            right: 4.8.w,
-                            top: 2.4.w,
-                            bottom: 3.w,
-                          ),
-                          margin: EdgeInsets.only(bottom: 2.4.w),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  width: 0.1.w, color: greyColorShade5),
+                      child: Container(
+                        color: swatch9,
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 20.h,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: blackTextColor,
-                                  size: 16.sp,
-                                ),
-                              ),
-                              Text(
-                                'Locations',
-                                style: TextStyle(
-                                  color: blackTextColor,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 4.8.w),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 15.h),
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              StreamBuilder<DocumentSnapshot>(
-                                  stream:
-                                      _fireStore.doc("locations").snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  primaryColor),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 15.w),
+                              margin: EdgeInsets.only(bottom: 2.4.w),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Material(
+                                    type: MaterialType.transparency,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Icon(
+                                          Icons.arrow_back,
+                                          color: whiteColor,
+                                          size: 20.sp,
                                         ),
-                                      );
-                                    }
-                                    if (snapshot.hasError) {
-                                      return const Text("Something went wrong");
-                                    }
-                                    if (!snapshot.data!.exists) {
-                                      return Column(
-                                        children: [
-                                          const Text(
-                                              "No Locations have been added yet"),
-                                          Padding(
+                                      ),
+                                    ),
+                                  ),
+                                  Text('LOCATIONS',
+                                      style: CustomTheme.semiLargeText(context)
+                                          .copyWith(color: whiteColor)),
+                                  SizedBox(width: 4.8.w),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 30.h),
+                            Expanded(
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: [
+                                  StreamBuilder<DocumentSnapshot>(
+                                      stream: _fireStore
+                                          .doc("locations")
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      primaryColor),
+                                            ),
+                                          );
+                                        }
+                                        if (snapshot.hasError) {
+                                          return const Text(
+                                              "Something went wrong");
+                                        }
+                                        if (!snapshot.data!.exists) {
+                                          return Column(
+                                            children: [
+                                              const Text(
+                                                  "No Locations have been added yet"),
+                                              SizedBox(
+                                                height: 20.h,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 24.w,
+                                                    vertical: 10.h),
+                                                child: CustomBorderButton(
+                                                  onPressed: () {
+                                                    showModalBottomSheet(
+                                                        context: context,
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        isScrollControlled:
+                                                            true,
+                                                        builder: (context) {
+                                                          return Padding(
+                                                            padding:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .viewInsets,
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          24.w,
+                                                                      vertical:
+                                                                          30.h),
+                                                              decoration: const BoxDecoration(
+                                                                  borderRadius: BorderRadius.only(
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              20),
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              20)),
+                                                                  color:
+                                                                      whiteColor),
+                                                              height: 400.h,
+                                                              child: Column(
+                                                                children: [
+                                                                  Text(
+                                                                      "Add Location",
+                                                                      style: CustomTheme.mediumText(
+                                                                              context)
+                                                                          .copyWith()),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        20.h,
+                                                                  ),
+                                                                  Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        Text(
+                                                                          "Location Name:",
+                                                                          style:
+                                                                              CustomTheme.normalText(context).copyWith(),
+                                                                        ),
+                                                                        SizedBox(
+                                                                            width:
+                                                                                200.w,
+                                                                            child: Container(
+                                                                              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
+                                                                              child: TextField(
+                                                                                controller: locationController,
+                                                                                decoration: const InputDecoration(
+                                                                                  border: InputBorder.none,
+                                                                                ),
+                                                                              ),
+                                                                            ))
+                                                                      ]),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        20.h,
+                                                                  ),
+                                                                  const Expanded(
+                                                                    child:
+                                                                        SizedBox(),
+                                                                  ),
+                                                                  CustomBorderButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      ref.watch(storageProvider).addLocation(
+                                                                          context,
+                                                                          locationController
+                                                                              .text);
+                                                                    },
+                                                                    color:
+                                                                        whiteColor,
+                                                                    borderColor:
+                                                                        greenTextColor,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        "Add",
+                                                                        style: CustomTheme.normalText(context)
+                                                                            .copyWith(
+                                                                          color:
+                                                                              greenTextColor,
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10.0.w,
+                                                                      ),
+                                                                      Icon(
+                                                                        Icons
+                                                                            .add_rounded,
+                                                                        color:
+                                                                            greenTextColor,
+                                                                        size: 25
+                                                                            .sp,
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        20.h,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        });
+                                                  },
+                                                  color: whiteColor,
+                                                  borderColor: greenTextColor,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Add New",
+                                                      style: CustomTheme
+                                                              .normalText(
+                                                                  context)
+                                                          .copyWith(
+                                                        color: greenTextColor,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5.0.w,
+                                                    ),
+                                                    Icon(
+                                                      Icons.add_rounded,
+                                                      color: greenTextColor,
+                                                      size: 25.sp,
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        }
+                                        List location =
+                                            snapshot.data!["location"] as List;
+                                        List<String> locations = location
+                                            .map((e) => e.toString())
+                                            .toList();
+                                        if (location.isEmpty) {
+                                          return Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 24.w,
                                                 vertical: 10.h),
@@ -249,347 +406,207 @@ class _LocationsViewState extends State<LocationsView> {
                                                 )
                                               ],
                                             ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                    List location =
-                                        snapshot.data!["location"] as List;
-                                    List<String> locations = location
-                                        .map((e) => e.toString())
-                                        .toList();
-                                    if (location.isEmpty) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 24.w, vertical: 10.h),
-                                        child: CustomBorderButton(
-                                          onPressed: () {
-                                            showModalBottomSheet(
-                                                context: context,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                isScrollControlled: true,
-                                                builder: (context) {
+                                          );
+                                        }
+                                        return Column(
+                                          children: [
+                                            ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: locations.length,
+                                                itemBuilder: (context, index) {
                                                   return Padding(
                                                     padding:
-                                                        MediaQuery.of(context)
-                                                            .viewInsets,
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 24.w,
-                                                              vertical: 30.h),
-                                                      decoration: const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          20)),
-                                                          color: whiteColor),
-                                                      height: 400.h,
-                                                      child: Column(
-                                                        children: [
-                                                          Text("Add Location",
-                                                              style: CustomTheme
-                                                                      .mediumText(
-                                                                          context)
-                                                                  .copyWith()),
-                                                          SizedBox(
-                                                            height: 20.h,
-                                                          ),
-                                                          Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "Location Name:",
-                                                                  style: CustomTheme
-                                                                          .normalText(
-                                                                              context)
-                                                                      .copyWith(),
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        200.w,
-                                                                    child:
-                                                                        Container(
-                                                                      decoration:
-                                                                          const BoxDecoration(
-                                                                              border: Border(bottom: BorderSide(color: blackColor))),
-                                                                      child:
-                                                                          TextField(
-                                                                        controller:
-                                                                            locationController,
-                                                                        decoration:
-                                                                            const InputDecoration(
-                                                                          border:
-                                                                              InputBorder.none,
-                                                                        ),
-                                                                      ),
-                                                                    ))
-                                                              ]),
-                                                          SizedBox(
-                                                            height: 20.h,
-                                                          ),
-                                                          const Expanded(
-                                                            child: SizedBox(),
-                                                          ),
-                                                          CustomBorderButton(
-                                                            onPressed: () {
-                                                              ref
-                                                                  .watch(
-                                                                      storageProvider)
-                                                                  .addLocation(
-                                                                      context,
-                                                                      locationController
-                                                                          .text);
-                                                            },
-                                                            color: whiteColor,
-                                                            borderColor:
-                                                                greenTextColor,
-                                                            children: <Widget>[
-                                                              Text(
-                                                                "Add",
-                                                                style: CustomTheme
-                                                                        .normalText(
-                                                                            context)
-                                                                    .copyWith(
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.h),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          locations[index],
+                                                          style: CustomTheme
+                                                                  .normalText(
+                                                                      context)
+                                                              .copyWith(
                                                                   color:
-                                                                      greenTextColor,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 10.0.w,
-                                                              ),
-                                                              Icon(
-                                                                Icons
-                                                                    .add_rounded,
-                                                                color:
-                                                                    greenTextColor,
-                                                                size: 25.sp,
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 20.h,
-                                                          ),
-                                                        ],
-                                                      ),
+                                                                      whiteColor),
+                                                        ),
+                                                        InkWell(
+                                                            onTap: () {
+                                                              ref
+                                                                  .watch(storageProvider
+                                                                      .notifier)
+                                                                  .deleteLocation(
+                                                                      context,
+                                                                      locations[
+                                                                          index]);
+                                                            },
+                                                            child: const Icon(
+                                                              Icons.delete,
+                                                              color: whiteColor,
+                                                            )),
+                                                      ],
                                                     ),
                                                   );
-                                                });
-                                          },
-                                          color: whiteColor,
-                                          borderColor: greenTextColor,
-                                          children: <Widget>[
-                                            Text(
-                                              "Add New",
-                                              style: CustomTheme.normalText(
-                                                      context)
-                                                  .copyWith(
-                                                color: greenTextColor,
-                                              ),
-                                            ),
+                                                }),
                                             SizedBox(
-                                              width: 5.0.w,
+                                              height: 10.h,
                                             ),
-                                            Icon(
-                                              Icons.add_rounded,
-                                              color: greenTextColor,
-                                              size: 25.sp,
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                    return Column(
-                                      children: [
-                                        ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: locations.length,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.h),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(locations[index]),
-                                                    InkWell(
-                                                        onTap: () {
-                                                          ref
-                                                              .watch(
-                                                                  storageProvider
-                                                                      .notifier)
-                                                              .deleteLocation(
-                                                                  context,
-                                                                  locations[
-                                                                      index]);
-                                                        },
-                                                        child: const Icon(
-                                                            Icons.delete)),
-                                                  ],
-                                                ),
-                                              );
-                                            }),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 24.w, vertical: 20.h),
-                                          child: CustomBorderButton(
-                                            onPressed: () {
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  isScrollControlled: true,
-                                                  builder: (context) {
-                                                    return Padding(
-                                                      padding:
-                                                          MediaQuery.of(context)
-                                                              .viewInsets,
-                                                      child: Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    24.w,
-                                                                vertical: 30.h),
-                                                        decoration: const BoxDecoration(
-                                                            borderRadius: BorderRadius.only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        20),
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        20)),
-                                                            color: whiteColor),
-                                                        height: 400.h,
-                                                        child: Column(
-                                                          children: [
-                                                            Text("Add Location",
-                                                                style: CustomTheme
-                                                                        .mediumText(
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 24.w,
+                                                  vertical: 20.h),
+                                              child: CustomBorderButton(
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                      context: context,
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      isScrollControlled: true,
+                                                      builder: (context) {
+                                                        return Padding(
+                                                          padding:
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .viewInsets,
+                                                          child: Container(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        24.w,
+                                                                    vertical:
+                                                                        30.h),
+                                                            decoration: const BoxDecoration(
+                                                                borderRadius: BorderRadius.only(
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            20),
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            20)),
+                                                                color:
+                                                                    whiteColor),
+                                                            height: 400.h,
+                                                            child: Column(
+                                                              children: [
+                                                                Text(
+                                                                    "Add Location",
+                                                                    style: CustomTheme.mediumText(
                                                                             context)
-                                                                    .copyWith()),
-                                                            SizedBox(
-                                                              height: 20.h,
-                                                            ),
-                                                            Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    "Location Name:",
-                                                                    style: CustomTheme.normalText(
-                                                                            context)
-                                                                        .copyWith(),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                          200.w,
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
-                                                                        child:
-                                                                            TextField(
-                                                                          controller:
-                                                                              locationController,
-                                                                          decoration:
-                                                                              const InputDecoration(
-                                                                            border:
-                                                                                InputBorder.none,
-                                                                          ),
-                                                                        ),
-                                                                      ))
-                                                                ]),
-                                                            const Expanded(
-                                                              child: SizedBox(),
-                                                            ),
-                                                            CustomBorderButton(
-                                                              onPressed: () {
-                                                                ref
-                                                                    .watch(
-                                                                        storageProvider)
-                                                                    .addLocation(
+                                                                        .copyWith()),
+                                                                SizedBox(
+                                                                  height: 20.h,
+                                                                ),
+                                                                Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        "Location Name:",
+                                                                        style: CustomTheme.normalText(context)
+                                                                            .copyWith(),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width: 200
+                                                                              .w,
+                                                                          child:
+                                                                              Container(
+                                                                            decoration:
+                                                                                const BoxDecoration(border: Border(bottom: BorderSide(color: blackColor))),
+                                                                            child:
+                                                                                TextField(
+                                                                              controller: locationController,
+                                                                              decoration: const InputDecoration(
+                                                                                border: InputBorder.none,
+                                                                              ),
+                                                                            ),
+                                                                          ))
+                                                                    ]),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(),
+                                                                ),
+                                                                CustomBorderButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    ref.watch(storageProvider).addLocation(
                                                                         context,
                                                                         locationController
                                                                             .text);
-                                                              },
-                                                              color: whiteColor,
-                                                              borderColor:
-                                                                  greenTextColor,
-                                                              children: <
-                                                                  Widget>[
-                                                                Text(
-                                                                  "Add",
-                                                                  style: CustomTheme
-                                                                          .normalText(
+                                                                  },
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderColor:
+                                                                      greenTextColor,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Text(
+                                                                      "Add",
+                                                                      style: CustomTheme.normalText(
                                                                               context)
-                                                                      .copyWith(
-                                                                    color:
-                                                                        greenTextColor,
-                                                                  ),
+                                                                          .copyWith(
+                                                                        color:
+                                                                            greenTextColor,
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          10.0.w,
+                                                                    ),
+                                                                    Icon(
+                                                                      Icons
+                                                                          .add_rounded,
+                                                                      color:
+                                                                          greenTextColor,
+                                                                      size:
+                                                                          25.sp,
+                                                                    )
+                                                                  ],
                                                                 ),
                                                                 SizedBox(
-                                                                  width: 10.0.w,
+                                                                  height: 20.h,
                                                                 ),
-                                                                Icon(
-                                                                  Icons
-                                                                      .add_rounded,
-                                                                  color:
-                                                                      greenTextColor,
-                                                                  size: 25.sp,
-                                                                )
                                                               ],
                                                             ),
-                                                            SizedBox(
-                                                              height: 20.h,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  });
-                                            },
-                                            color: whiteColor,
-                                            borderColor: greenTextColor,
-                                            children: <Widget>[
-                                              Text(
-                                                "Add New",
-                                                style: CustomTheme.normalText(
-                                                        context)
-                                                    .copyWith(
-                                                  color: greenTextColor,
-                                                ),
+                                                          ),
+                                                        );
+                                                      });
+                                                },
+                                                color: whiteColor,
+                                                borderColor: greenTextColor,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Add New",
+                                                    style:
+                                                        CustomTheme.normalText(
+                                                                context)
+                                                            .copyWith(
+                                                      color: greenTextColor,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.0.w,
+                                                  ),
+                                                  Icon(
+                                                    Icons.add_rounded,
+                                                    color: greenTextColor,
+                                                    size: 25.sp,
+                                                  )
+                                                ],
                                               ),
-                                              SizedBox(
-                                                width: 5.0.w,
-                                              ),
-                                              Icon(
-                                                Icons.add_rounded,
-                                                color: greenTextColor,
-                                                size: 25.sp,
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  }),
-                            ],
-                          ),
+                                            )
+                                          ],
+                                        );
+                                      }),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ));
+                      ),
+                    ));
               });
         }));
   }

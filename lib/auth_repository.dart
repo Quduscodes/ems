@@ -1,3 +1,4 @@
+import 'package:ems/admin_bottom.dart';
 import 'package:ems/exports.dart';
 
 final authLoader = StateProvider<bool>((ref) => false);
@@ -45,7 +46,11 @@ class Authentication extends ChangeNotifier {
             userId: user!.uid,
           ));
           Navigator.pop(context);
-          Navigator.pushNamed(context, RouteGenerator.staffHome);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const StaffHomePage(),
+              ),
+              (Route<dynamic> route) => false);
         });
       }
     } else {
@@ -100,7 +105,11 @@ class Authentication extends ChangeNotifier {
             setLoginState(AuthState.LoggedIn);
             ScaffoldMessenger.of(context).showSnackBar(showSnackBar(context,
                 text: 'Welcome ' + snapshot.data()!['lastName'], error: false));
-            Navigator.pushNamed(context, RouteGenerator.adminHome);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const BottomAppBarScreenAdmin(),
+                ),
+                (Route<dynamic> route) => false);
           }
         } else {
           ref.watch(authLoader.notifier).state = false;
@@ -149,7 +158,11 @@ class Authentication extends ChangeNotifier {
       if (user != null) {
         readData(user!).then((value) {
           ref.watch(authLoader.notifier).state = false;
-          Navigator.pushNamed(context, RouteGenerator.staffHome);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const StaffHomePage(),
+              ),
+              (Route<dynamic> route) => false);
         });
       }
     } else {
@@ -181,7 +194,7 @@ class Authentication extends ChangeNotifier {
             "firstName": firstName,
             "lastName": lastName,
             "password": password,
-            "space": {},
+            "space": [],
           }).then((value) {
             storeUserData(UserData(
               firstName: firstName,
@@ -192,7 +205,11 @@ class Authentication extends ChangeNotifier {
             ref.watch(authLoader.notifier).state = false;
             ScaffoldMessenger.of(context).showSnackBar(showSnackBar(context,
                 text: 'Welcome ' + lastName, error: false));
-            Navigator.pushNamed(context, RouteGenerator.adminHome);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const BottomAppBarScreenAdmin(),
+                ),
+                (Route<dynamic> route) => false);
           });
         }
       });

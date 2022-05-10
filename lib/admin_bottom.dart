@@ -1,6 +1,9 @@
 import 'package:ems/add_locations.dart';
-import 'package:ems/chat_window.dart';
 import 'package:ems/exports.dart';
+import 'package:ems/extensions.dart';
+import 'package:ems/stats.dart';
+
+import 'help_support.dart';
 
 class BottomAppBarScreenAdmin extends ConsumerStatefulWidget {
   const BottomAppBarScreenAdmin({Key? key}) : super(key: key);
@@ -28,34 +31,31 @@ class _BottomAppBarScreenVendorState
       value: const SystemUiOverlayStyle(
         // For Android.
         // Use [light] for white status bar and [dark] for black status bar.
-        statusBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
         // For iOS.
         // Use [dark] for white status bar and [light] for black status bar.
-        statusBarBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
-        backgroundColor: whiteColor,
-        body: SafeArea(
-          maintainBottomViewPadding: true,
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (int page) {
-              setState(() {
-                _page = page;
-              });
-            },
-            physics: const NeverScrollableScrollPhysics(),
-            children: bottomAppBarScreens!.toList(),
-          ),
+        backgroundColor: swatch24,
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (int page) {
+            setState(() {
+              _page = page;
+            });
+          },
+          physics: const NeverScrollableScrollPhysics(),
+          children: bottomAppBarScreens!.toList(),
         ),
         bottomNavigationBar: Container(
           //height: 89.0.h,
           width: size.width,
           decoration: BoxDecoration(
-            color: whiteColor,
+            color: swatch24,
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF000000).withOpacity(0.08),
@@ -66,7 +66,7 @@ class _BottomAppBarScreenVendorState
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.0.w, vertical: 25.0.h),
+            padding: EdgeInsets.symmetric(horizontal: 5.0.w, vertical: 10.0.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -86,7 +86,7 @@ class _BottomAppBarScreenVendorState
                         },
                         child: Container(
                           width: 60.0.w,
-                          height: 60.0.h,
+                          height: 55.0.h,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             //borderRadius: BorderRadius.circular(35.0.h),
@@ -97,43 +97,26 @@ class _BottomAppBarScreenVendorState
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                                height: 40.h,
-                                width: 40.w,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                      colors: i == _page
-                                          ? [gradientGreen1, gradientGreen2]
-                                          : [gradientGrey1, gradientGrey2]),
-                                ),
-                                alignment: Alignment.center,
-                                child: i == _page
-                                    ? SvgPicture.asset(
-                                        bottomAppBarAsset![i].activeAssetImage!,
-                                        //color:  whiteColor,
-                                        fit: BoxFit.scaleDown,
-                                      )
-                                    : SvgPicture.asset(
-                                        bottomAppBarAsset![i].assetImage!,
-                                        //color:  whiteColor,
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                              ),
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  height: 25.h,
+                                  width: 30.w,
+                                  alignment: Alignment.center,
+                                  child: SvgPicture.asset(
+                                    bottomAppBarAsset![i].assetImage!,
+                                    color: i == _page ? swatch6 : swatch22,
+                                    fit: BoxFit.scaleDown,
+                                  )),
                               SizedBox(
                                 height: 5.0.h,
                               ),
                               Text(
                                 bottomAppBarAsset![i].assetName!,
-                                style:
-                                    CustomTheme.smallestText(context).copyWith(
-                                  color: i == _page
-                                      ? blackColor
-                                      : greyTextColorShade2,
+                                style: CustomTheme.smallText(context).copyWith(
+                                  color: i == _page ? swatch6 : swatch22,
                                   fontWeight: i == _page
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
                                 ),
                               )
                             ],
@@ -146,17 +129,6 @@ class _BottomAppBarScreenVendorState
             ),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
-          tooltip: "Add Products",
-          // isExtended: true,
-          child: const Icon(Icons.add, color: whiteColor),
-          backgroundColor: blackColor,
-          onPressed: () {
-            Navigator.pushNamed(context, RouteGenerator.addAdminSpace);
-            // Navigator.pushNamed(context, RouteGenerator.addNewProductScreen);
-          },
-        ),
       ),
     );
   }
@@ -164,8 +136,8 @@ class _BottomAppBarScreenVendorState
 
 List<Widget>? bottomAppBarScreens = [
   const AdminHomePage(),
-  const LiveChatScreen(),
-  const AppliancesView(),
+  const HelpAndSupport(),
+  const Stats(),
   const LocationsView(),
 ];
 
@@ -180,23 +152,23 @@ class BottomAppBarAssetModel {
 
 List<BottomAppBarAssetModel>? bottomAppBarAsset = [
   BottomAppBarAssetModel(
-    assetName: 'Dashboard',
-    assetImage: "dashboard",
+    assetName: 'HOME',
+    assetImage: "home".svg,
     activeAssetImage: "activeDashboard",
   ),
   BottomAppBarAssetModel(
     assetName: 'Orders',
-    assetImage: "orders",
+    assetImage: "home".svg,
     activeAssetImage: "activeOrders",
   ),
   BottomAppBarAssetModel(
-    assetName: 'Products',
-    assetImage: "product",
+    assetName: 'STATS',
+    assetImage: "home".svg,
     activeAssetImage: "activeProduct",
   ),
   BottomAppBarAssetModel(
     assetName: 'VendorCentral',
-    assetImage: "vendorCentralIcon",
+    assetImage: "home".svg,
     activeAssetImage: "activeVendorCentral",
   ),
 ];

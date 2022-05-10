@@ -1,4 +1,5 @@
 import 'add_locations.dart';
+import 'admin_bottom.dart';
 import 'admin_liveChat.dart';
 import 'chat_window.dart';
 import 'exports.dart';
@@ -26,6 +27,7 @@ class RouteGenerator {
   static const String helpAndSupport = "/helpAndSupport";
   static const String locations = "/locations";
   static const String splash = "/";
+  static const String bottomAppBarScreenAdmin = "bottomAppBarScreenAdmin";
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -33,6 +35,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const Splash());
       case staffLifeChat:
         return MaterialPageRoute(builder: (_) => const LiveChatScreen());
+      case bottomAppBarScreenAdmin:
+        return MaterialPageRoute(
+            builder: (_) => const BottomAppBarScreenAdmin());
       case locations:
         return MaterialPageRoute(builder: (_) => const LocationsView());
       case helpAndSupport:
