@@ -75,6 +75,10 @@ class Appliances {
 
   Appliances({this.applianceName, this.rating, this.sId});
 
+  addRating(String newRating) {
+    rating = newRating;
+  }
+
   Appliances.fromJson(Map<String, dynamic> json) {
     applianceName = json['applianceName'];
     rating = json['rating'];

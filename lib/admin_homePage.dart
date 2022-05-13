@@ -50,29 +50,30 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       ),
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(
+                          height: 40.h,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15.w, vertical: 10.h),
+                          child: Text(
+                            "Welcome ${box.get(StringConst.userDataKey)!.lastName ?? ''} !",
+                            style: CustomTheme.semiLargeText(context).copyWith(
+                                color: whiteColorShade2,
+                                fontFamily: GoogleFonts.adamina().fontFamily,
+                                fontSize: 23.sp),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
                         Expanded(
                           child: ListView(
+                            padding: EdgeInsets.all(0.0),
                             shrinkWrap: true,
                             children: [
-                              SizedBox(
-                                height: 15.h,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15.w),
-                                child: Text(
-                                  "Welcome ${box.get(StringConst.userDataKey)!.lastName ?? ''} !",
-                                  style: CustomTheme.semiLargeText(context)
-                                      .copyWith(
-                                          color: whiteColorShade2,
-                                          fontFamily:
-                                              GoogleFonts.adamina().fontFamily,
-                                          fontSize: 23.sp),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 20.h,
-                              ),
                               StreamBuilder<DocumentSnapshot>(
                                   stream: _fireStore
                                       .doc(box
@@ -938,8 +939,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                               subAppliances[
                                                                       index]
                                                                   .quantity!;
-                                                          num ratio = unit /
-                                                              totalRating!;
+                                                          num ratio = unit != 0
+                                                              ? unit /
+                                                                  totalRating!
+                                                              : 0.0;
                                                           return Padding(
                                                             padding: EdgeInsets
                                                                 .symmetric(
@@ -975,7 +978,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                                 SizedBox(
                                                                   height: 5.h,
                                                                 ),
-                                                                ratio == 0
+                                                                ratio == 0 ||
+                                                                        ratio ==
+                                                                            null ||
+                                                                        ratio ==
+                                                                            0.0 ||
+                                                                        ratio <=
+                                                                            0.0
                                                                     ? SizedBox()
                                                                     : FractionallySizedBox(
                                                                         widthFactor:
@@ -1061,6 +1070,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                   name: key,
                                                   quantity: value['quantity']));
                                             });
+
                                             return Container(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 10.w,
@@ -1104,8 +1114,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                               subAppliances[
                                                                       index]
                                                                   .quantity!;
-                                                          num ratio = unit /
-                                                              totalRating!;
+                                                          num ratio = unit != 0
+                                                              ? unit /
+                                                                  totalRating!
+                                                              : 0.0;
                                                           return Padding(
                                                             padding: EdgeInsets
                                                                 .symmetric(
@@ -1140,7 +1152,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                                 SizedBox(
                                                                   height: 5.h,
                                                                 ),
-                                                                ratio == 0
+                                                                ratio == 0 ||
+                                                                        ratio ==
+                                                                            null ||
+                                                                        ratio ==
+                                                                            0.0
                                                                     ? const SizedBox()
                                                                     : FractionallySizedBox(
                                                                         widthFactor:
@@ -1164,7 +1180,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                         })));
                                           }),
                                     ),
-                              SizedBox(height: 10.h,)
+                              SizedBox(
+                                height: 10.h,
+                              )
                             ],
                           ),
                         ),

@@ -11,8 +11,6 @@ class Stats extends StatefulWidget {
 class _StatsState extends State<Stats> {
   String totalSpaceDuration = StringConst.last7Days;
 
-  final CollectionReference _fireStore =
-      FirebaseFirestore.instance.collection('admin');
   final CollectionReference _spaceFireStore =
       FirebaseFirestore.instance.collection('spaces');
   int selectedIndex = 0;
@@ -58,29 +56,30 @@ class _StatsState extends State<Stats> {
                     ),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.w, vertical: 10.h),
+                        child: Text(
+                          "STATS",
+                          style: CustomTheme.semiLargeText(context).copyWith(
+                              color: whiteColorShade2,
+                              fontFamily: GoogleFonts.adamina().fontFamily,
+                              fontSize: 23.sp),
+                        ),
+                      ),
                       SizedBox(
                         height: 15.h,
                       ),
                       Expanded(
                         child: ListView(
+                          padding: const EdgeInsets.all(0.0),
                           shrinkWrap: true,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.w),
-                              child: Text(
-                                "STATS",
-                                style: CustomTheme.semiLargeText(context)
-                                    .copyWith(
-                                        color: whiteColorShade2,
-                                        fontFamily:
-                                            GoogleFonts.adamina().fontFamily,
-                                        fontSize: 23.sp),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15.h,
-                            ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
                               child: Container(
@@ -351,77 +350,259 @@ class _StatsState extends State<Stats> {
                                     }
                                     List space = snapshot.data!.docs;
                                     List<Space> spaces = [];
+                                    int totalRating = 0;
+                                    int unitRating = 0;
+                                    DateTime now = DateTime.now();
+                                    Map<String, dynamic> appliances = {};
+                                    Map<String, double> dataMap = {};
+                                    List<SubAppliance> subAppliances = [];
                                     if (totalSpaceDuration ==
                                         StringConst.last7Days) {
                                       spaces = space
                                           .map((e) =>
                                               Space.fromJson(e.data()['space']))
-                                          .toList()
-                                          .where((element) =>
-                                              calculateDaysInterval(
-                                                      DateTime.now(),
-                                                      DateTime(
-                                                          2022,
-                                                          DateTime.now().day -
-                                                              7))
-                                                  .contains(DateTime.parse(
-                                                      element.dateAdded!)))
                                           .toList();
-                                    } else if (totalSpaceDuration ==
-                                        StringConst.last14Days) {
-                                      spaces = space
-                                          .map((e) =>
-                                              Space.fromJson(e.data()['space']))
-                                          .toList()
-                                          .where((element) =>
-                                              element.dateAdded == "")
-                                          .toList();
+                                      for (Space mySpace in spaces) {
+                                        for (Appliances appliance
+                                            in mySpace.appliances!) {
+                                          DateTime startDate = DateTime(
+                                              now.year, now.month, now.day - 7);
+                                          DateTime dateAdded = DateTime.parse(
+                                              mySpace.dateAdded!);
+                                          unitRating = totalRating +
+                                              int.tryParse(appliance.rating!)! *
+                                                  int.tryParse(
+                                                      appliance.quantity!)!;
+                                          if (dateAdded.isAfter(startDate)) {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          } else {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    7;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    7,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          }
+                                        }
+                                      }
                                     } else if (totalSpaceDuration ==
                                         StringConst.last30Days) {
                                       spaces = space
                                           .map((e) =>
                                               Space.fromJson(e.data()['space']))
-                                          .toList()
-                                          .where((element) =>
-                                              element.dateAdded == "")
                                           .toList();
+                                      for (Space mySpace in spaces) {
+                                        for (Appliances appliance
+                                            in mySpace.appliances!) {
+                                          unitRating = totalRating +
+                                              int.tryParse(appliance.rating!)! *
+                                                  int.tryParse(
+                                                      appliance.quantity!)!;
+                                          DateTime startDate = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - 30);
+
+                                          DateTime dateAdded = DateTime.parse(
+                                              mySpace.dateAdded!);
+
+                                          if (dateAdded.isAfter(startDate)) {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          } else {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    30;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    30,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          }
+                                        }
+                                      }
                                     } else {
                                       spaces = space
                                           .map((e) =>
                                               Space.fromJson(e.data()['space']))
                                           .toList();
-                                    }
-                                    int? totalRating = 0;
-                                    Map<String, dynamic> appliances = {};
-                                    Map<String, double> dataMap = {};
-                                    List<SubAppliance> subAppliances = [];
-                                    for (Space space in spaces) {
-                                      for (Appliances appliance
-                                          in space.appliances!) {
-                                        totalRating =
-                                            int.tryParse(appliance.rating!)! *
+                                      for (Space mySpace in spaces) {
+                                        for (Appliances appliance
+                                            in mySpace.appliances!) {
+                                          DateTime startDate = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day - 365);
+                                          DateTime dateAdded = DateTime.parse(
+                                              mySpace.dateAdded!);
+                                          unitRating = totalRating +
+                                              int.tryParse(appliance.rating!)! *
+                                                  int.tryParse(
+                                                      appliance.quantity!)!;
+                                          if (dateAdded.isAfter(startDate)) {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
                                                     int.tryParse(
-                                                        appliance.quantity!)! +
-                                                totalRating!;
-                                        if (appliances.containsKey(
-                                            appliance.applianceName)) {
-                                          appliances[appliance.applianceName!]
-                                                  ['quantity'] =
-                                              int.parse(appliance.quantity!) +
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
                                                   appliances[appliance
                                                           .applianceName!]
                                                       ["quantity"]!;
-                                        } else {
-                                          appliances[appliance.applianceName!] =
-                                              {
-                                            "rating": int.tryParse(
-                                                appliance.rating!)!,
-                                            "quantity": int.tryParse(
-                                                appliance.quantity!)!
-                                          };
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    now
+                                                        .difference(dateAdded)
+                                                        .inDays,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          } else {
+                                            totalRating = totalRating +
+                                                int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! *
+                                                    24 *
+                                                    365;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                        appliance.rating!)! *
+                                                    24 *
+                                                    365,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          }
                                         }
                                       }
                                     }
+
                                     appliances.forEach((key, value) {
                                       int unit =
                                           value['rating']! * value['quantity']!;
@@ -476,7 +657,7 @@ class _StatsState extends State<Stats> {
                                                     chartType: ChartType.ring,
                                                     ringStrokeWidth: 25,
                                                     centerText:
-                                                        "${totalRating.toString()} kw/h",
+                                                        totalRating.toString(),
                                                     legendOptions:
                                                         const LegendOptions(
                                                       showLegendsInRow: false,
@@ -512,7 +693,7 @@ class _StatsState extends State<Stats> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                          "${totalRating.toString()} kwh",
+                                                          "${(unitRating / 60).truncate().toString()} kw/s",
                                                           style: CustomTheme
                                                                   .semiLargeText(
                                                                       context)
@@ -521,7 +702,7 @@ class _StatsState extends State<Stats> {
                                                                 whiteColorShade2,
                                                           )),
                                                       Text(
-                                                          "${totalRating.toString()} kwh",
+                                                          "${unitRating.truncate().toString()} kw/h",
                                                           style: CustomTheme
                                                                   .semiLargeText(
                                                                       context)
@@ -588,7 +769,7 @@ class _StatsState extends State<Stats> {
                                                           subAppliances[index]
                                                               .quantity!;
                                                       num ratio =
-                                                          unit / totalRating!;
+                                                          unit / totalRating;
                                                       return Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -618,6 +799,7 @@ class _StatsState extends State<Stats> {
                                                                       )),
                                                                   Text(
                                                                       unit
+                                                                          .truncate()
                                                                           .toString(),
                                                                       style: CustomTheme.smallText(
                                                                               context)
@@ -631,6 +813,7 @@ class _StatsState extends State<Stats> {
                                                             ),
                                                             FractionallySizedBox(
                                                               widthFactor: ratio
+                                                                  .truncate()
                                                                   .toDouble(),
                                                               child: Container(
                                                                 height: 6.h,

@@ -464,7 +464,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                               borderColor: greenTextColor,
                                                                               children: <Widget>[
                                                                                 Text(
-                                                                                  "Edit",
+                                                                                  "Done",
                                                                                   style: CustomTheme.normalText(context).copyWith(
                                                                                     color: greenTextColor,
                                                                                   ),
@@ -473,7 +473,7 @@ class _AppliancesViewState extends State<AppliancesView> {
                                                                                   width: 10.0.w,
                                                                                 ),
                                                                                 Icon(
-                                                                                  Icons.add_rounded,
+                                                                                  Icons.done,
                                                                                   color: greenTextColor,
                                                                                   size: 25.sp,
                                                                                 )

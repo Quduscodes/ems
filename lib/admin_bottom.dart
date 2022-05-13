@@ -1,7 +1,7 @@
-import 'package:ems/add_locations.dart';
 import 'package:ems/exports.dart';
 import 'package:ems/extensions.dart';
 import 'package:ems/extras.dart';
+import 'package:ems/profile.dart';
 import 'package:ems/stats.dart';
 
 class BottomAppBarScreenAdmin extends ConsumerStatefulWidget {
@@ -75,7 +75,7 @@ class _BottomAppBarScreenVendorState
                     child: Material(
                       type: MaterialType.transparency,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(35.0.h),
+                        borderRadius: BorderRadius.circular(20.0.h),
                         onTap: () {
                           setState(() {
                             _pageController!.animateToPage(i,
@@ -138,7 +138,7 @@ List<Widget>? bottomAppBarScreens = [
   const AdminHomePage(),
   const Extras(),
   const Stats(),
-  const LocationsView(),
+  const Profile(),
 ];
 
 class BottomAppBarAssetModel {
@@ -163,12 +163,12 @@ List<BottomAppBarAssetModel>? bottomAppBarAsset = [
   ),
   BottomAppBarAssetModel(
     assetName: 'STATS',
-    assetImage: "home".svg,
+    assetImage: "chart".svg,
     activeAssetImage: "activeProduct",
   ),
   BottomAppBarAssetModel(
-    assetName: 'VendorCentral',
-    assetImage: "home".svg,
+    assetName: 'PROFILE',
+    assetImage: "Person".svg,
     activeAssetImage: "activeVendorCentral",
   ),
 ];
