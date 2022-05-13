@@ -160,11 +160,8 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                       textCapitalization: TextCapitalization.sentences,
                       autofocus: true,
                       controller: messageController,
-                      style: TextStyle(
-                        color: blackTextColor,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: CustomTheme.smallText(context)
+                          .copyWith(color: whiteColor),
                       decoration: InputDecoration(
                         hintText: "Write a message",
                         hintStyle: CustomTheme.smallText(context)

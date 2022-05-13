@@ -402,13 +402,6 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                               quantity: value['quantity']));
                                         });
                                         if (data.spaceOwner == null) {
-                                          WidgetsBinding.instance
-                                              ?.addPostFrameCallback((_) {
-                                            // Add Your Code here.
-                                            ref
-                                                .watch(isSpaceEmpty.notifier)
-                                                .state = false;
-                                          });
                                           return Material(
                                               type: MaterialType.transparency,
                                               child: InkWell(
@@ -427,13 +420,6 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                               color:
                                                                   whiteColor))));
                                         } else {
-                                          WidgetsBinding.instance
-                                              ?.addPostFrameCallback((_) {
-                                            // Add Your Code here.
-                                            ref
-                                                .watch(isSpaceEmpty.notifier)
-                                                .state = false;
-                                          });
                                           return Container(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.w,
