@@ -340,93 +340,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               SizedBox(
                                 height: 20.h,
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15.w),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w, vertical: 10.w),
-                                  decoration:
-                                      const BoxDecoration(color: swatch14),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Suggestions to help you manage your electricity  ➡",
-                                        style: CustomTheme.normalText(context)
-                                            .copyWith(color: swatch15),
-                                      ),
-                                      SizedBox(
-                                        height: 7.h,
-                                      ),
-                                      Text(
-                                        "You can reduce up to 20% of energy by turning off appliances when not in use.",
-                                        style: CustomTheme.normalText(context)
-                                            .copyWith(color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        height: 10.h,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                              decoration: const BoxDecoration(
-                                                  color: swatch16),
-                                              child: Material(
-                                                type: MaterialType.transparency,
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 7.w,
-                                                            vertical: 7.w),
-                                                    child: Text(
-                                                      "GOT IT",
-                                                      style: CustomTheme
-                                                              .normalText(
-                                                                  context)
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )),
-                                          SizedBox(
-                                            width: 15.w,
-                                          ),
-                                          Container(
-                                              decoration: const BoxDecoration(
-                                                  color: swatch3),
-                                              child: Material(
-                                                  type:
-                                                      MaterialType.transparency,
-                                                  child: InkWell(
-                                                    onTap: () {},
-                                                    child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 7.w,
-                                                                vertical: 7.w),
-                                                        child: Text(
-                                                          "LEARN MORE",
-                                                          style: CustomTheme
-                                                                  .normalText(
-                                                                      context)
-                                                              .copyWith(
-                                                                  color: Colors
-                                                                      .white),
-                                                        )),
-                                                  )))
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              const Ads(),
                               SizedBox(
                                 height: 25.h,
                               ),
@@ -1193,7 +1107,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       FloatingActionButtonLocation.endFloat,
                   floatingActionButton: ref.watch(selectedId) != "all"
                       ? FloatingActionButton(
-                          tooltip: "Delete Space",
+                          tooltip: "Edit Space",
                           // isExtended: true,
                           child: const Icon(Icons.edit, color: whiteColor),
                           backgroundColor: blackColor,
@@ -1206,5 +1120,82 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 );
               });
         }));
+  }
+}
+
+class Ads extends StatelessWidget {
+  const Ads({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+        decoration: const BoxDecoration(color: swatch14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Suggestions to help you manage your electricity  ➡",
+              style: CustomTheme.normalText(context).copyWith(color: swatch15),
+            ),
+            SizedBox(
+              height: 7.h,
+            ),
+            Text(
+              "You can reduce up to 20% of energy by turning off appliances when not in use.",
+              style:
+                  CustomTheme.normalText(context).copyWith(color: Colors.white),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                    decoration: const BoxDecoration(color: swatch16),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 7.w, vertical: 7.w),
+                          child: Text(
+                            "GOT IT",
+                            style: CustomTheme.normalText(context)
+                                .copyWith(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )),
+                SizedBox(
+                  width: 15.w,
+                ),
+                Container(
+                    decoration: const BoxDecoration(color: swatch3),
+                    child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          onTap: () {},
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7.w, vertical: 7.w),
+                              child: Text(
+                                "LEARN MORE",
+                                style: CustomTheme.normalText(context)
+                                    .copyWith(color: Colors.white),
+                              )),
+                        )))
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

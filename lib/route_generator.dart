@@ -1,3 +1,6 @@
+import 'package:ems/staff_appliances.dart';
+import 'package:ems/staff_locations.dart';
+
 import 'add_locations.dart';
 import 'admin_bottom.dart';
 import 'admin_liveChat.dart';
@@ -10,6 +13,7 @@ class RouteGenerator {
   static const String loginStaff = "/loginStaff";
   static const String loginAdmin = "/loginAdmin";
   static const String appliances = "/appliances";
+  static const String staffAppliances = "/staffAppliances";
   static const String signUpAdmin = "/signUpAdmin";
   static const String signStaff = "/signStaff";
   static const String onboarding = "/onboarding";
@@ -30,13 +34,18 @@ class RouteGenerator {
   static const String extras = "/extras";
   static const String splash = "/";
   static const String bottomAppBarScreenAdmin = "bottomAppBarScreenAdmin";
+  static const String staffLocationsView = "staffLocationsView";
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const Splash());
+      case staffLocationsView:
+        return MaterialPageRoute(builder: (_) => const StaffLocationsView());
       case staffLifeChat:
         return MaterialPageRoute(builder: (_) => const LiveChatScreen());
+      case staffAppliances:
+        return MaterialPageRoute(builder: (_) => const StaffAppliancesView());
       case bottomAppBarScreenAdmin:
         return MaterialPageRoute(
             builder: (_) => const BottomAppBarScreenAdmin());

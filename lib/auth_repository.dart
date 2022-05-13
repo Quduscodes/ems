@@ -1,6 +1,8 @@
 import 'package:ems/admin_bottom.dart';
 import 'package:ems/exports.dart';
 
+import 'bottom_nav_staff.dart';
+
 final authLoader = StateProvider<bool>((ref) => false);
 final _auth = FirebaseAuth.instance;
 
@@ -48,7 +50,7 @@ class Authentication extends ChangeNotifier {
           Navigator.pop(context);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                builder: (context) => const StaffHomePage(),
+                builder: (context) => const BottomAppBarScreenStaff(),
               ),
               (Route<dynamic> route) => false);
         });
@@ -160,7 +162,7 @@ class Authentication extends ChangeNotifier {
           ref.watch(authLoader.notifier).state = false;
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                builder: (context) => const StaffHomePage(),
+                builder: (context) => const BottomAppBarScreenStaff(),
               ),
               (Route<dynamic> route) => false);
         });

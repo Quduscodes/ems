@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems/color_constant.dart';
+import 'package:ems/custom_theme.dart';
 import 'package:ems/string_const.dart';
 import 'package:ems/user_data.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: swatch9,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,24 +48,25 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: blackTextColor,
-                      size: 16.sp,
+                  Material(
+                    type: MaterialType.transparency,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: whiteColor,
+                          size: 20.sp,
+                        ),
+                      ),
                     ),
                   ),
-                  Text(
-                    'Live Chat',
-                    style: TextStyle(
-                      color: blackTextColor,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Live Chat',
+                      style: CustomTheme.normalText(context)
+                          .copyWith(color: whiteColor)),
                   SizedBox(width: 4.8.w),
                 ],
               ),
@@ -74,7 +76,7 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                     stream: _fireStore.doc(user!.userId).snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(primaryColor),
@@ -82,10 +84,16 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                         );
                       }
                       if (snapshot.hasError) {
-                        return const Text("Something went wrong");
+                        return Text("Something went wrong",
+                            style: CustomTheme.normalText(context)
+                                .copyWith(color: whiteColor));
                       }
                       if (!snapshot.data!.exists) {
-                        return const Text("Start Chat");
+                        return Text(
+                          "Start Chat",
+                          style: CustomTheme.normalText(context)
+                              .copyWith(color: whiteColor),
+                        );
                       }
                       List messages = snapshot.data!['mainChat'];
                       List<MessageBubble> messageBubbles = [];
@@ -126,15 +134,16 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                                                   color: greyColorShade5),
                                             ),
                                           )
-                                        : SizedBox(),
+                                        : const SizedBox(),
                                     Column(
                                       children: messageBubbles,
                                     ),
                                   ]),
                             );
                     })
-                : CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                : const CircularProgressIndicator(
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(primaryColor),
                   ),
             Container(
               // padding: EdgeInsets.only(bottom: .),
@@ -158,15 +167,17 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                       ),
                       decoration: InputDecoration(
                         hintText: "Write a message",
+                        hintStyle: CustomTheme.smallText(context)
+                            .copyWith(color: whiteColor),
                         isDense: true,
                         isCollapsed: true,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                           borderSide: BorderSide.none,
                         ),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide.none,
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -179,7 +190,7 @@ class _LiveChatScreenState extends State<LiveChatScreen> {
                       messageController.clear();
                       controller.animateTo(
                         controller.position.minScrollExtent,
-                        duration: Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 300),
                         curve: Curves.fastOutSlowIn,
                       );
                     },

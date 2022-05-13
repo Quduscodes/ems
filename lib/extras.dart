@@ -8,25 +8,8 @@ class Extras extends StatefulWidget {
 }
 
 class _ExtrasState extends State<Extras> {
-  String totalSpaceDuration = StringConst.last7Days;
-
-  final CollectionReference _fireStore =
-      FirebaseFirestore.instance.collection('admin');
-  final CollectionReference _spaceFireStore =
-      FirebaseFirestore.instance.collection('spaces');
-  int selectedIndex = 0;
-  String selectedId = "all";
   final UserData? user =
       Hive.box<UserData>(StringConst.userDataBox).get(StringConst.userDataKey);
-  List<DateTime> calculateDaysInterval(DateTime startDate, DateTime endDate) {
-    List<DateTime> days = [];
-    for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
-      days.add(startDate.add(Duration(days: i)));
-    }
-    return days;
-  }
-
-  List<Color> colorList = [swatch18, swatch19, swatch20, swatch21, swatch22];
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(

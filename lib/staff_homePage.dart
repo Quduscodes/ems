@@ -1,5 +1,7 @@
 import 'package:ems/exports.dart';
-import 'package:ems/space_data.dart';
+import 'package:pie_chart/pie_chart.dart';
+
+final isSpaceEmpty = StateProvider<bool>((ref) => false);
 
 class StaffHomePage extends StatefulWidget {
   const StaffHomePage({Key? key}) : super(key: key);
@@ -11,6 +13,7 @@ class StaffHomePage extends StatefulWidget {
 class _StaffHomePageState extends State<StaffHomePage> {
   final CollectionReference _fireStore =
       FirebaseFirestore.instance.collection('users');
+  List<Color> colorList = [swatch18, swatch19, swatch20, swatch21, swatch22];
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -30,345 +33,549 @@ class _StaffHomePageState extends State<StaffHomePage> {
               builder: (context, Box<UserData> box, _) {
                 return Scaffold(
                     body: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        gradientGreen1,
-                        gradientGreen2,
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 15.w),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            swatch9,
+                            swatch9,
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
                               children: [
-                                Text(
-                                  "Welcome ${box.get(StringConst.userDataKey)!.lastName ?? ''},",
-                                  style: CustomTheme.semiLargeText(context)
-                                      .copyWith(
-                                          color: whiteColorShade2,
-                                          fontFamily:
-                                              GoogleFonts.adamina().fontFamily,
-                                          fontSize: 25.sp),
-                                ),
-                                Container(
+                                Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 7.w, vertical: 5.h),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border:
-                                          Border.all(color: whiteColorShade5)),
-                                  child: const Icon(
-                                    Icons.person,
-                                    color: whiteColorShade5,
+                                      horizontal: 15.w, vertical: 10.h),
+                                  child: Text(
+                                    "Welcome ${box.get(StringConst.userDataKey)!.lastName ?? ''},",
+                                    style: CustomTheme.semiLargeText(context)
+                                        .copyWith(
+                                            color: whiteColorShade2,
+                                            fontFamily: GoogleFonts.adamina()
+                                                .fontFamily,
+                                            fontSize: 25.sp),
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 30.h,
-                            ),
-                            StreamBuilder<DocumentSnapshot>(
-                                stream: _fireStore
-                                    .doc(box
-                                        .get(StringConst.userDataKey)!
-                                        .userId)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                primaryColor),
-                                      ),
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return const Text("Something went wrong");
-                                  }
-                                  if (!snapshot.data!.exists) {
-                                    return const Text("Start Chat");
-                                  }
-                                  final Space data =
-                                      Space.fromJson(snapshot.data!['space']);
-                                  int? totalRating = 0;
-                                  Map<String, dynamic> appliances = {};
-                                  List<SubAppliance> subAppliances = [];
-                                  if (data.spaceOwner != null) {
-                                    for (Appliances appliance
-                                        in data.appliances!) {
-                                      totalRating =
-                                          int.tryParse(appliance.rating!)! *
-                                                  int.tryParse(
-                                                      appliance.quantity!)! +
-                                              totalRating!;
-                                      if (appliances.containsKey(
-                                          appliance.applianceName)) {
-                                        appliances[appliance.applianceName!]
-                                            ['quantity'] = int.parse(
-                                                appliance.quantity!) +
-                                            appliances[appliance.applianceName!]
-                                                ["quantity"]!;
-                                      } else {
-                                        appliances[appliance.applianceName!] = {
-                                          "rating": appliance.rating,
-                                          "quantity":
-                                              int.tryParse(appliance.quantity!)!
-                                        };
-                                      }
-                                    }
-                                  }
-                                  appliances.forEach((key, value) {
-                                    subAppliances.add(SubAppliance(
-                                        rating: value['rating'],
-                                        name: key,
-                                        quantity: value['quantity']));
-                                  });
-                                  if (data.spaceOwner == null) {
-                                    return Material(
-                                        type: MaterialType.transparency,
-                                        child: InkWell(
-                                            onTap: () {
-                                              Navigator.pushNamed(
-                                                  context,
-                                                  RouteGenerator
-                                                      .configureSpaceStaff);
-                                            },
-                                            child:
-                                                const Text("Configure space")));
-                                  } else {
-                                    return Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.white.withOpacity(0.5),
-                                              Colors.white.withOpacity(0.2)
-                                            ],
-                                            begin:
-                                                AlignmentDirectional.topStart,
-                                            end: AlignmentDirectional.bottomEnd,
-                                          ),
-                                          border: Border.all(
-                                              width: 1.5,
-                                              color: Colors.white
-                                                  .withOpacity(0.2)),
-                                          color: whiteColor.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.w,
-                                                  vertical: 10.h),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "${data.type}:",
-                                                          style: CustomTheme.mediumText(
+                                SizedBox(
+                                  height: 30.h,
+                                ),
+                                const Ads(),
+                                SizedBox(
+                                  height: 30.h,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: Text(
+                                    "ENERGY CONSUMPTION OVERVIEW",
+                                    style: CustomTheme.normalText(context)
+                                        .copyWith(color: swatch15),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: const Divider(
+                                    color: swatch15,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: StreamBuilder<DocumentSnapshot>(
+                                      stream: _fireStore
+                                          .doc(box
+                                              .get(StringConst.userDataKey)!
+                                              .userId)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      primaryColor),
+                                            ),
+                                          );
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Text("Something went wrong",
+                                              style: CustomTheme.normalText(
+                                                      context)
+                                                  .copyWith(color: whiteColor));
+                                        }
+                                        if (!snapshot.data!.exists) {
+                                          return Text("Empty",
+                                              style: CustomTheme.normalText(
+                                                      context)
+                                                  .copyWith(color: whiteColor));
+                                        }
+                                        final Space data = Space.fromJson(
+                                            snapshot.data!['space']);
+                                        int? totalRating = 0;
+                                        Map<String, dynamic> appliances = {};
+                                        List<SubAppliance> subAppliances = [];
+                                        Map<String, double> dataMap = {};
+
+                                        if (data.spaceOwner != null) {
+                                          for (Appliances appliance
+                                              in data.appliances!) {
+                                            totalRating = int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! +
+                                                totalRating!;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                    appliance.rating!)!,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          }
+                                        }
+                                        appliances.forEach((key, value) {
+                                          int unit = value['rating']! *
+                                              value['quantity']!;
+                                          dataMap[key] =
+                                              double.tryParse(unit.toString())!;
+                                          subAppliances.add(SubAppliance(
+                                              rating:
+                                                  value['rating'].toString(),
+                                              name: key,
+                                              quantity: value['quantity']));
+                                        });
+                                        if (data.spaceOwner == null) {
+                                          WidgetsBinding.instance
+                                              ?.addPostFrameCallback((_) {
+                                            // Add Your Code here.
+                                            ref
+                                                .watch(isSpaceEmpty.notifier)
+                                                .state = false;
+                                          });
+                                          return Material(
+                                              type: MaterialType.transparency,
+                                              child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        RouteGenerator
+                                                            .configureSpaceStaff);
+                                                  },
+                                                  child: Text(
+                                                      "You have not configured your space,\nConfigure space",
+                                                      style: CustomTheme
+                                                              .normalText(
                                                                   context)
-                                                              .copyWith(
-                                                                  color:
-                                                                      whiteColorShade2,
-                                                                  fontFamily: GoogleFonts
-                                                                          .adamina()
-                                                                      .fontFamily,
-                                                                  fontSize:
-                                                                      25.sp),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5.h,
-                                                        ),
-                                                        Text(
-                                                          "📍 ${data.location}",
-                                                          style: CustomTheme
-                                                                  .mediumText(
-                                                                      context)
-                                                              .copyWith(
-                                                                  color:
-                                                                      whiteColorShade2,
-                                                                  fontFamily: GoogleFonts
-                                                                          .adamina()
-                                                                      .fontFamily),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Material(
-                                                    type: MaterialType
-                                                        .transparency,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        ref
-                                                            .watch(spaceProvider
-                                                                .notifier)
-                                                            .state = data;
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            RouteGenerator
-                                                                .editSpaceStaff);
-                                                      },
-                                                      child: const Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Icon(
-                                                          Icons.edit,
-                                                          color:
-                                                              whiteColorShade2,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10.h,
-                                            ),
-                                            Padding(
+                                                          .copyWith(
+                                                              color:
+                                                                  whiteColor))));
+                                        } else {
+                                          WidgetsBinding.instance
+                                              ?.addPostFrameCallback((_) {
+                                            // Add Your Code here.
+                                            ref
+                                                .watch(isSpaceEmpty.notifier)
+                                                .state = false;
+                                          });
+                                          return Container(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.w,
-                                                  vertical: 5.h),
-                                              child: Text(
-                                                totalRating.toString(),
-                                                style: CustomTheme.largeText(
-                                                        context)
-                                                    .copyWith(
-                                                        color: whiteColorShade2,
-                                                        fontFamily: GoogleFonts
-                                                                .adamina()
-                                                            .fontFamily,
-                                                        fontSize: 30.sp),
+                                                  vertical: 15.h),
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    swatch17,
+                                                    swatch17,
+                                                  ],
+                                                  begin: AlignmentDirectional
+                                                      .topStart,
+                                                  end: AlignmentDirectional
+                                                      .bottomEnd,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 10.h,
-                                            ),
-                                            Container(
+                                              child: Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 10.w,
                                                     vertical: 10.h),
-                                                child: Row(
-                                                  children: data.appliances!
-                                                      .map((e) => Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.w),
-                                                            child: Column(
-                                                              children: [
-                                                                Text(
-                                                                  e.quantity!,
-                                                                  style: CustomTheme.mediumText(context).copyWith(
-                                                                      color:
-                                                                          whiteColorShade2,
-                                                                      fontFamily:
-                                                                          GoogleFonts.adamina()
-                                                                              .fontFamily,
-                                                                      fontSize:
-                                                                          25.sp),
-                                                                ),
-                                                                Text(
-                                                                  e.applianceName!,
-                                                                  style: CustomTheme.normalText(context).copyWith(
-                                                                      color:
-                                                                          whiteColorShade2,
-                                                                      fontFamily:
-                                                                          GoogleFonts.adamina()
-                                                                              .fontFamily,
-                                                                      fontSize:
-                                                                          15.sp),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ))
-                                                      .toList(),
-                                                )),
-                                          ],
-                                        ));
-                                  }
-                                }),
-                            SizedBox(
-                              height: 300.h,
-                            ),
-                            Center(
-                                child: Text(
-                              "Need Help?",
-                              style: CustomTheme.normalText(context).copyWith(
-                                  color: whiteColorShade2,
-                                  fontFamily: GoogleFonts.adamina().fontFamily,
-                                  fontSize: 15.sp),
-                            )),
-                            SizedBox(
-                              height: 5.h,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 125.w),
-                              child: Material(
-                                type: MaterialType.transparency,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, RouteGenerator.staffLifeChat);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.white.withOpacity(0.5),
-                                          Colors.white.withOpacity(0.2)
-                                        ],
-                                        begin: AlignmentDirectional.topStart,
-                                        end: AlignmentDirectional.bottomEnd,
-                                      ),
-                                      border: Border.all(
-                                          width: 1.5,
-                                          color: Colors.white.withOpacity(0.2)),
-                                      color: whiteColor.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10.h),
-                                      child: Icon(
-                                        Icons.chat,
-                                        color: whiteColorShade2,
-                                        size: 30.sp,
-                                      ),
-                                    ),
+                                                child: Column(
+                                                  children: [
+                                                    PieChart(
+                                                      dataMap: dataMap,
+                                                      animationDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  800),
+                                                      chartLegendSpacing: 32,
+                                                      chartRadius:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2.5,
+                                                      colorList: colorList,
+                                                      initialAngleInDegree: 0,
+                                                      chartType: ChartType.ring,
+                                                      ringStrokeWidth: 25,
+                                                      centerText:
+                                                          "${totalRating.toString()} kw/h",
+                                                      legendOptions:
+                                                          const LegendOptions(
+                                                        showLegendsInRow: false,
+                                                        legendPosition:
+                                                            LegendPosition
+                                                                .right,
+                                                        showLegends: false,
+                                                        legendShape:
+                                                            BoxShape.circle,
+                                                        legendTextStyle:
+                                                            TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      chartValuesOptions:
+                                                          const ChartValuesOptions(
+                                                        showChartValueBackground:
+                                                            true,
+                                                        showChartValues: false,
+                                                        showChartValuesInPercentage:
+                                                            false,
+                                                        showChartValuesOutside:
+                                                            false,
+                                                        decimalPlaces: 1,
+                                                      ),
+                                                      // gradientList: ---To add gradient colors---
+                                                      // emptyColorGradient: ---Empty Color gradient---
+                                                    ),
+                                                    SizedBox(height: 10.h),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                            "${totalRating.toString()} kwh",
+                                                            style: CustomTheme
+                                                                    .semiLargeText(
+                                                                        context)
+                                                                .copyWith(
+                                                              color:
+                                                                  whiteColorShade2,
+                                                            )),
+                                                        Text(
+                                                            "${totalRating.toString()} kwh",
+                                                            style: CustomTheme
+                                                                    .semiLargeText(
+                                                                        context)
+                                                                .copyWith(
+                                                              color:
+                                                                  whiteColorShade2,
+                                                            )),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ));
+                                        }
+                                      }),
+                                ),
+                                SizedBox(
+                                  height: 25.h,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: Text(
+                                    "USAGE BY DEVICES",
+                                    style: CustomTheme.normalText(context)
+                                        .copyWith(color: swatch15),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: const Divider(
+                                    color: swatch15,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
+                                  child: StreamBuilder<DocumentSnapshot>(
+                                      stream: _fireStore
+                                          .doc(box
+                                              .get(StringConst.userDataKey)!
+                                              .userId)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      primaryColor),
+                                            ),
+                                          );
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Text("Something went wrong",
+                                              style: CustomTheme.normalText(
+                                                      context)
+                                                  .copyWith(color: whiteColor));
+                                        }
+                                        if (!snapshot.data!.exists) {
+                                          return Text("Empty",
+                                              style: CustomTheme.normalText(
+                                                      context)
+                                                  .copyWith(color: whiteColor));
+                                        }
+                                        final Space data = Space.fromJson(
+                                            snapshot.data!['space']);
+                                        int? totalRating = 0;
+                                        Map<String, dynamic> appliances = {};
+                                        List<SubAppliance> subAppliances = [];
+                                        Map<String, double> dataMap = {};
+
+                                        if (data.spaceOwner != null) {
+                                          for (Appliances appliance
+                                              in data.appliances!) {
+                                            totalRating = int.tryParse(
+                                                        appliance.rating!)! *
+                                                    int.tryParse(
+                                                        appliance.quantity!)! +
+                                                totalRating!;
+                                            if (appliances.containsKey(
+                                                appliance.applianceName)) {
+                                              appliances[
+                                                      appliance.applianceName!]
+                                                  ['quantity'] = int.parse(
+                                                      appliance.quantity!) +
+                                                  appliances[appliance
+                                                          .applianceName!]
+                                                      ["quantity"]!;
+                                            } else {
+                                              appliances[
+                                                  appliance.applianceName!] = {
+                                                "rating": int.tryParse(
+                                                    appliance.rating!)!,
+                                                "quantity": int.tryParse(
+                                                    appliance.quantity!)!
+                                              };
+                                            }
+                                          }
+                                        }
+                                        appliances.forEach((key, value) {
+                                          int unit = value['rating']! *
+                                              value['quantity']!;
+                                          dataMap[key] =
+                                              double.tryParse(unit.toString())!;
+                                          subAppliances.add(SubAppliance(
+                                              rating:
+                                                  value['rating'].toString(),
+                                              name: key,
+                                              quantity: value['quantity']));
+                                        });
+                                        if (data.spaceOwner == null) {
+                                          WidgetsBinding.instance
+                                              ?.addPostFrameCallback((_) {
+                                            // Add Your Code here.
+                                            ref
+                                                .watch(isSpaceEmpty.notifier)
+                                                .state = false;
+                                          });
+                                          return Material(
+                                              type: MaterialType.transparency,
+                                              child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        RouteGenerator
+                                                            .configureSpaceStaff);
+                                                  },
+                                                  child: Text(
+                                                      "You have not configured your space,\nConfigure space",
+                                                      style: CustomTheme
+                                                              .normalText(
+                                                                  context)
+                                                          .copyWith(
+                                                              color:
+                                                                  whiteColor))));
+                                        } else {
+                                          WidgetsBinding.instance
+                                              ?.addPostFrameCallback((_) {
+                                            // Add Your Code here.
+                                            ref
+                                                .watch(isSpaceEmpty.notifier)
+                                                .state = false;
+                                          });
+                                          return Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                  vertical: 15.h),
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    swatch17,
+                                                    swatch17,
+                                                  ],
+                                                  begin: AlignmentDirectional
+                                                      .topStart,
+                                                  end: AlignmentDirectional
+                                                      .bottomEnd,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                              child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.w,
+                                                      vertical: 10.h),
+                                                  child: ListView.builder(
+                                                      physics:
+                                                          const NeverScrollableScrollPhysics(),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      shrinkWrap: true,
+                                                      itemCount:
+                                                          subAppliances.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        int unit = int.tryParse(
+                                                                subAppliances[
+                                                                        index]
+                                                                    .rating!)! *
+                                                            subAppliances[index]
+                                                                .quantity!;
+                                                        num ratio = unit != 0
+                                                            ? unit /
+                                                                totalRating!
+                                                            : 0.0;
+                                                        return Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      5.h),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                        subAppliances[index].name! +
+                                                                            '   x' +
+                                                                            subAppliances[index]
+                                                                                .quantity
+                                                                                .toString(),
+                                                                        style: CustomTheme.normalText(context)
+                                                                            .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                        )),
+                                                                    Text(
+                                                                        unit
+                                                                            .toString(),
+                                                                        style: CustomTheme.smallText(context)
+                                                                            .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                        )),
+                                                                  ]),
+                                                              SizedBox(
+                                                                height: 5.h,
+                                                              ),
+                                                              ratio == 0 ||
+                                                                      ratio ==
+                                                                          null ||
+                                                                      ratio ==
+                                                                          0.0 ||
+                                                                      ratio <=
+                                                                          0.0
+                                                                  ? SizedBox()
+                                                                  : FractionallySizedBox(
+                                                                      widthFactor:
+                                                                          ratio
+                                                                              .toDouble(),
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            6.h,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              swatch23,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(15),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      })));
+                                        }
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ));
+                    ),
+                    floatingActionButtonLocation:
+                        FloatingActionButtonLocation.endFloat,
+                    floatingActionButton: !ref.watch(isSpaceEmpty)
+                        ? FloatingActionButton(
+                            tooltip: "Add Space",
+                            // isExtended: true,
+                            child: const Icon(Icons.add, color: whiteColor),
+                            backgroundColor: blackColor,
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, RouteGenerator.configureSpaceStaff);
+                            },
+                          )
+                        : FloatingActionButton(
+                            tooltip: "Edit Space",
+                            // isExtended: true,
+                            child: const Icon(Icons.edit, color: whiteColor),
+                            backgroundColor: blackColor,
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, RouteGenerator.editSpaceStaff);
+                            },
+                          ));
               });
         }));
   }
