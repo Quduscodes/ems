@@ -1,8 +1,8 @@
 import 'package:ems/exports.dart';
 import 'package:ems/extensions.dart';
 import 'package:ems/profile.dart';
+import 'package:ems/staffStats.dart';
 import 'package:ems/staff_extras.dart';
-import 'package:ems/stats.dart';
 
 class BottomAppBarScreenStaff extends ConsumerStatefulWidget {
   const BottomAppBarScreenStaff({Key? key}) : super(key: key);
@@ -137,7 +137,7 @@ class _BottomAppBarScreenVendorState
 List<Widget>? bottomAppBarScreens = [
   const StaffHomePage(),
   const StaffExtras(),
-  const Stats(),
+  const StaffStats(),
   const Profile(),
 ];
 

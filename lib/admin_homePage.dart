@@ -71,7 +71,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         ),
                         Expanded(
                           child: ListView(
-                            padding: EdgeInsets.all(0.0),
+                            padding: const EdgeInsets.all(0.0),
                             shrinkWrap: true,
                             children: [
                               StreamBuilder<DocumentSnapshot>(
@@ -899,7 +899,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                                                             0.0 ||
                                                                         ratio <=
                                                                             0.0
-                                                                    ? SizedBox()
+                                                                    ? const SizedBox()
                                                                     : FractionallySizedBox(
                                                                         widthFactor:
                                                                             ratio.toDouble(),

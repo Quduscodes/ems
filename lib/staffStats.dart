@@ -11,8 +11,8 @@ class StaffStats extends StatefulWidget {
 class _StaffStatsState extends State<StaffStats> {
   String totalSpaceDuration = StringConst.last7Days;
 
-  final CollectionReference _spaceFireStore =
-      FirebaseFirestore.instance.collection('spaces');
+  final CollectionReference _fireStore =
+      FirebaseFirestore.instance.collection('users');
   int selectedIndex = 0;
   String selectedId = "all";
   final UserData? user =
@@ -330,8 +330,12 @@ class _StaffStatsState extends State<StaffStats> {
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 15.w),
-                              child: StreamBuilder<QuerySnapshot>(
-                                  stream: _spaceFireStore.snapshots(),
+                              child: StreamBuilder<DocumentSnapshot>(
+                                  stream: _fireStore
+                                      .doc(box
+                                          .get(StringConst.userDataKey)!
+                                          .userId)
+                                      .snapshots(),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
                                       return const Center(
@@ -343,499 +347,340 @@ class _StaffStatsState extends State<StaffStats> {
                                       );
                                     }
                                     if (snapshot.hasError) {
-                                      return const Text("Something went wrong");
+                                      return Text("Something went wrong",
+                                          style: CustomTheme.normalText(context)
+                                              .copyWith(color: whiteColor));
                                     }
-                                    if (snapshot.data!.size == 0) {
-                                      return const Text("No Space yet");
+                                    if (!snapshot.data!.exists) {
+                                      return Text("Empty",
+                                          style: CustomTheme.normalText(context)
+                                              .copyWith(color: whiteColor));
                                     }
-                                    List space = snapshot.data!.docs;
-                                    List<Space> spaces = [];
-                                    int totalRating = 0;
-                                    int unitRating = 0;
-                                    DateTime now = DateTime.now();
+                                    final Space data =
+                                        Space.fromJson(snapshot.data!['space']);
+                                    int? totalRating = 0;
                                     Map<String, dynamic> appliances = {};
-                                    Map<String, double> dataMap = {};
                                     List<SubAppliance> subAppliances = [];
-                                    if (totalSpaceDuration ==
-                                        StringConst.last7Days) {
-                                      spaces = space
-                                          .map((e) =>
-                                              Space.fromJson(e.data()['space']))
-                                          .toList();
-                                      for (Space mySpace in spaces) {
-                                        for (Appliances appliance
-                                            in mySpace.appliances!) {
-                                          DateTime startDate = DateTime(
-                                              now.year, now.month, now.day - 7);
-                                          DateTime dateAdded = DateTime.parse(
-                                              mySpace.dateAdded!);
-                                          unitRating = totalRating +
-                                              int.tryParse(appliance.rating!)! *
-                                                  int.tryParse(
-                                                      appliance.quantity!)!;
-                                          if (dateAdded.isAfter(startDate)) {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
-                                                    int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
-                                                  appliances[appliance
-                                                          .applianceName!]
-                                                      ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          } else {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
-                                                    int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    7;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
-                                                  appliances[appliance
-                                                          .applianceName!]
-                                                      ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    7,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          }
-                                        }
-                                      }
-                                    } else if (totalSpaceDuration ==
-                                        StringConst.last30Days) {
-                                      spaces = space
-                                          .map((e) =>
-                                              Space.fromJson(e.data()['space']))
-                                          .toList();
-                                      for (Space mySpace in spaces) {
-                                        for (Appliances appliance
-                                            in mySpace.appliances!) {
-                                          unitRating = totalRating +
-                                              int.tryParse(appliance.rating!)! *
-                                                  int.tryParse(
-                                                      appliance.quantity!)!;
-                                          DateTime startDate = DateTime(
-                                              now.year,
-                                              now.month,
-                                              now.day - 30);
+                                    Map<String, double> dataMap = {};
 
-                                          DateTime dateAdded = DateTime.parse(
-                                              mySpace.dateAdded!);
-
-                                          if (dateAdded.isAfter(startDate)) {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
+                                    if (data.spaceOwner != null) {
+                                      for (Appliances appliance
+                                          in data.appliances!) {
+                                        totalRating =
+                                            int.tryParse(appliance.rating!)! *
                                                     int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
+                                                        appliance.quantity!)! +
+                                                totalRating!;
+                                        totalRating = totalSpaceDuration ==
+                                                StringConst.thisYear
+                                            ? totalRating * 365
+                                            : totalSpaceDuration ==
+                                                    StringConst.last7Days
+                                                ? totalRating * 7
+                                                : totalSpaceDuration ==
+                                                        StringConst.last30Days
+                                                    ? totalRating * 30
+                                                    : totalRating;
+                                        if (appliances.containsKey(
+                                            appliance.applianceName)) {
+                                          appliances[appliance.applianceName!]
+                                                  ['quantity'] =
+                                              int.parse(appliance.quantity!) +
                                                   appliances[appliance
                                                           .applianceName!]
                                                       ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          } else {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
-                                                    int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    30;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
-                                                  appliances[appliance
-                                                          .applianceName!]
-                                                      ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    30,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          }
-                                        }
-                                      }
-                                    } else {
-                                      spaces = space
-                                          .map((e) =>
-                                              Space.fromJson(e.data()['space']))
-                                          .toList();
-                                      for (Space mySpace in spaces) {
-                                        for (Appliances appliance
-                                            in mySpace.appliances!) {
-                                          DateTime startDate = DateTime(
-                                              now.year,
-                                              now.month,
-                                              now.day - 365);
-                                          DateTime dateAdded = DateTime.parse(
-                                              mySpace.dateAdded!);
-                                          unitRating = totalRating +
-                                              int.tryParse(appliance.rating!)! *
-                                                  int.tryParse(
-                                                      appliance.quantity!)!;
-                                          if (dateAdded.isAfter(startDate)) {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
-                                                    int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
-                                                  appliances[appliance
-                                                          .applianceName!]
-                                                      ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    now
-                                                        .difference(dateAdded)
-                                                        .inDays,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          } else {
-                                            totalRating = totalRating +
-                                                int.tryParse(
-                                                        appliance.rating!)! *
-                                                    int.tryParse(
-                                                        appliance.quantity!)! *
-                                                    24 *
-                                                    365;
-                                            if (appliances.containsKey(
-                                                appliance.applianceName)) {
-                                              appliances[
-                                                      appliance.applianceName!]
-                                                  ['quantity'] = int.parse(
-                                                      appliance.quantity!) +
-                                                  appliances[appliance
-                                                          .applianceName!]
-                                                      ["quantity"]!;
-                                            } else {
-                                              appliances[
-                                                  appliance.applianceName!] = {
-                                                "rating": int.tryParse(
-                                                        appliance.rating!)! *
-                                                    24 *
-                                                    365,
-                                                "quantity": int.tryParse(
-                                                    appliance.quantity!)!
-                                              };
-                                            }
-                                          }
+                                        } else {
+                                          appliances[appliance.applianceName!] =
+                                              {
+                                            "rating": int.tryParse(
+                                                appliance.rating!)!,
+                                            "quantity": int.tryParse(
+                                                appliance.quantity!)!
+                                          };
                                         }
                                       }
                                     }
-
                                     appliances.forEach((key, value) {
                                       int unit =
                                           value['rating']! * value['quantity']!;
-                                      dataMap[key] =
-                                          double.tryParse(unit.toString())!;
+                                      dataMap[key] = totalSpaceDuration ==
+                                              StringConst.thisYear
+                                          ? double.tryParse(unit.toString())! *
+                                              365
+                                          : totalSpaceDuration ==
+                                                  StringConst.last7Days
+                                              ? double.tryParse(
+                                                      unit.toString())! *
+                                                  7
+                                              : totalSpaceDuration ==
+                                                      StringConst.last30Days
+                                                  ? double.tryParse(
+                                                          unit.toString())! *
+                                                      7
+                                                  : double.tryParse(
+                                                      unit.toString())!;
                                       subAppliances.add(SubAppliance(
-                                          rating: value['rating'].toString(),
+                                          rating: totalSpaceDuration ==
+                                                  StringConst.thisYear
+                                              ? (value['rating'] * 365)
+                                                  .toString()
+                                              : totalSpaceDuration ==
+                                                      StringConst.last7Days
+                                                  ? (value['rating'] * 7)
+                                                      .toString()
+                                                  : totalSpaceDuration ==
+                                                          StringConst.last30Days
+                                                      ? (value['rating'] * 30)
+                                                              .toString() *
+                                                          7
+                                                      : value['rating']
+                                                          .toString(),
                                           name: key,
                                           quantity: value['quantity']));
                                     });
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.w,
-                                                vertical: 15.h),
-                                            decoration: BoxDecoration(
-                                              gradient: const LinearGradient(
-                                                colors: [
-                                                  swatch17,
-                                                  swatch17,
-                                                ],
-                                                begin: AlignmentDirectional
-                                                    .topStart,
-                                                end: AlignmentDirectional
-                                                    .bottomEnd,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            child: Padding(
+                                    print(subAppliances.first);
+                                    if (data.spaceOwner == null) {
+                                      return Material(
+                                          type: MaterialType.transparency,
+                                          child: InkWell(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    RouteGenerator
+                                                        .configureSpaceStaff);
+                                              },
+                                              child: Text(
+                                                  "You have not configured your space,\nConfigure space",
+                                                  style: CustomTheme.normalText(
+                                                          context)
+                                                      .copyWith(
+                                                          color: whiteColor))));
+                                    } else {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.w,
-                                                  vertical: 10.h),
-                                              child: Column(
-                                                children: [
-                                                  PieChart(
-                                                    dataMap: dataMap,
-                                                    animationDuration:
-                                                        const Duration(
-                                                            milliseconds: 800),
-                                                    chartLegendSpacing: 32,
-                                                    chartRadius:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2.5,
-                                                    colorList: colorList,
-                                                    initialAngleInDegree: 0,
-                                                    chartType: ChartType.ring,
-                                                    ringStrokeWidth: 25,
-                                                    centerText:
-                                                        totalRating.toString(),
-                                                    legendOptions:
-                                                        const LegendOptions(
-                                                      showLegendsInRow: false,
-                                                      legendPosition:
-                                                          LegendPosition.right,
-                                                      showLegends: false,
-                                                      legendShape:
-                                                          BoxShape.circle,
-                                                      legendTextStyle:
-                                                          TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    chartValuesOptions:
-                                                        const ChartValuesOptions(
-                                                      showChartValueBackground:
-                                                          true,
-                                                      showChartValues: false,
-                                                      showChartValuesInPercentage:
-                                                          false,
-                                                      showChartValuesOutside:
-                                                          false,
-                                                      decimalPlaces: 1,
-                                                    ),
-                                                    // gradientList: ---To add gradient colors---
-                                                    // emptyColorGradient: ---Empty Color gradient---
-                                                  ),
-                                                  SizedBox(height: 10.h),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                          "${(unitRating / 60).truncate().toString()} kw/s",
-                                                          style: CustomTheme
-                                                                  .semiLargeText(
-                                                                      context)
-                                                              .copyWith(
-                                                            color:
-                                                                whiteColorShade2,
-                                                          )),
-                                                      Text(
-                                                          "${unitRating.truncate().toString()} kw/h",
-                                                          style: CustomTheme
-                                                                  .semiLargeText(
-                                                                      context)
-                                                              .copyWith(
-                                                            color:
-                                                                whiteColorShade2,
-                                                          )),
-                                                    ],
-                                                  )
-                                                ],
+                                                  vertical: 15.h),
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    swatch17,
+                                                    swatch17,
+                                                  ],
+                                                  begin: AlignmentDirectional
+                                                      .topStart,
+                                                  end: AlignmentDirectional
+                                                      .bottomEnd,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
                                               ),
-                                            )),
-                                        SizedBox(
-                                          height: 20.h,
-                                        ),
-                                        Text(
-                                          "USAGE BY DEVICES",
-                                          style: CustomTheme.normalText(context)
-                                              .copyWith(color: swatch15),
-                                        ),
-                                        const Divider(
-                                          color: swatch15,
-                                        ),
-                                        SizedBox(
-                                          height: 15.h,
-                                        ),
-                                        Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.w,
-                                                vertical: 15.h),
-                                            decoration: BoxDecoration(
-                                              gradient: const LinearGradient(
-                                                colors: [
-                                                  swatch17,
-                                                  swatch17,
-                                                ],
-                                                begin: AlignmentDirectional
-                                                    .topStart,
-                                                end: AlignmentDirectional
-                                                    .bottomEnd,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            child: Padding(
+                                              child: Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 10.w,
                                                     vertical: 10.h),
-                                                child: ListView.builder(
-                                                    physics:
-                                                        const NeverScrollableScrollPhysics(),
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            0.0),
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        subAppliances.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      int unit = int.tryParse(
-                                                              subAppliances[
-                                                                      index]
-                                                                  .rating!)! *
-                                                          subAppliances[index]
-                                                              .quantity!;
-                                                      num ratio =
-                                                          unit / totalRating;
-                                                      return Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 5.h),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                      subAppliances[index]
-                                                                              .name! +
-                                                                          '   x' +
-                                                                          subAppliances[index]
-                                                                              .quantity
-                                                                              .toString(),
-                                                                      style: CustomTheme.normalText(
-                                                                              context)
-                                                                          .copyWith(
-                                                                        color:
-                                                                            whiteColorShade2,
-                                                                      )),
-                                                                  Text(
-                                                                      unit
-                                                                          .truncate()
-                                                                          .toString(),
-                                                                      style: CustomTheme.smallText(
-                                                                              context)
-                                                                          .copyWith(
-                                                                        color:
-                                                                            whiteColorShade2,
-                                                                      )),
-                                                                ]),
-                                                            SizedBox(
-                                                              height: 5.h,
-                                                            ),
-                                                            FractionallySizedBox(
-                                                              widthFactor: ratio
-                                                                  .truncate()
-                                                                  .toDouble(),
-                                                              child: Container(
-                                                                height: 6.h,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color:
-                                                                      swatch23,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              15),
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
+                                                child: Column(
+                                                  children: [
+                                                    PieChart(
+                                                      dataMap: dataMap,
+                                                      animationDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  800),
+                                                      chartLegendSpacing: 32,
+                                                      chartRadius:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2.5,
+                                                      colorList: colorList,
+                                                      initialAngleInDegree: 0,
+                                                      chartType: ChartType.ring,
+                                                      ringStrokeWidth: 25,
+                                                      centerText: totalRating
+                                                          .toString(),
+                                                      legendOptions:
+                                                          const LegendOptions(
+                                                        showLegendsInRow: false,
+                                                        legendPosition:
+                                                            LegendPosition
+                                                                .right,
+                                                        showLegends: false,
+                                                        legendShape:
+                                                            BoxShape.circle,
+                                                        legendTextStyle:
+                                                            TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
-                                                      );
-                                                    })))
-                                      ],
-                                    );
+                                                      ),
+                                                      chartValuesOptions:
+                                                          const ChartValuesOptions(
+                                                        showChartValueBackground:
+                                                            true,
+                                                        showChartValues: false,
+                                                        showChartValuesInPercentage:
+                                                            false,
+                                                        showChartValuesOutside:
+                                                            false,
+                                                        decimalPlaces: 1,
+                                                      ),
+                                                      // gradientList: ---To add gradient colors---
+                                                      // emptyColorGradient: ---Empty Color gradient---
+                                                    ),
+                                                    SizedBox(height: 10.h),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                            "${(totalRating! / 60).truncate().toString()} kw/s",
+                                                            style: CustomTheme
+                                                                    .semiLargeText(
+                                                                        context)
+                                                                .copyWith(
+                                                              color:
+                                                                  whiteColorShade2,
+                                                            )),
+                                                        Text(
+                                                            "${totalRating.truncate().toString()} kw/h",
+                                                            style: CustomTheme
+                                                                    .semiLargeText(
+                                                                        context)
+                                                                .copyWith(
+                                                              color:
+                                                                  whiteColorShade2,
+                                                            )),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              )),
+                                          SizedBox(
+                                            height: 20.h,
+                                          ),
+                                          Text(
+                                            "USAGE BY DEVICES",
+                                            style:
+                                                CustomTheme.normalText(context)
+                                                    .copyWith(color: swatch15),
+                                          ),
+                                          const Divider(
+                                            color: swatch15,
+                                          ),
+                                          SizedBox(
+                                            height: 15.h,
+                                          ),
+                                          Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                  vertical: 15.h),
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    swatch17,
+                                                    swatch17,
+                                                  ],
+                                                  begin: AlignmentDirectional
+                                                      .topStart,
+                                                  end: AlignmentDirectional
+                                                      .bottomEnd,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                              child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.w,
+                                                      vertical: 10.h),
+                                                  child: ListView.builder(
+                                                      physics:
+                                                          const NeverScrollableScrollPhysics(),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      shrinkWrap: true,
+                                                      itemCount:
+                                                          subAppliances.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        int unit = int.tryParse(
+                                                                subAppliances[
+                                                                        index]
+                                                                    .rating!)! *
+                                                            subAppliances[index]
+                                                                .quantity!;
+                                                        num ratio =
+                                                            unit / totalRating!;
+                                                        return Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      5.h),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                        subAppliances[index].name! +
+                                                                            '   x' +
+                                                                            subAppliances[index]
+                                                                                .quantity
+                                                                                .toString(),
+                                                                        style: CustomTheme.normalText(context)
+                                                                            .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                        )),
+                                                                    Text(
+                                                                        unit
+                                                                            .truncate()
+                                                                            .toString(),
+                                                                        style: CustomTheme.smallText(context)
+                                                                            .copyWith(
+                                                                          color:
+                                                                              whiteColorShade2,
+                                                                        )),
+                                                                  ]),
+                                                              SizedBox(
+                                                                height: 5.h,
+                                                              ),
+                                                              FractionallySizedBox(
+                                                                widthFactor: ratio
+                                                                    .truncate()
+                                                                    .toDouble(),
+                                                                child:
+                                                                    Container(
+                                                                  height: 6.h,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        swatch23,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      })))
+                                        ],
+                                      );
+                                    }
                                   }),
-                            )
+                            ),
                           ],
                         ),
                       ),
