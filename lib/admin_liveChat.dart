@@ -23,7 +23,6 @@ class _AdminLiveChatScreenState extends State<AdminLiveChatScreen> {
     return Scaffold(
       backgroundColor: whiteColor,
       body: Consumer(builder: (context, WidgetRef ref, child) {
-        print("Hello");
         return SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

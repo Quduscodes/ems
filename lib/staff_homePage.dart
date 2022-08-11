@@ -168,7 +168,7 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                         });
                                         if (data.spaceOwner == null) {
                                           WidgetsBinding.instance
-                                              ?.addPostFrameCallback((_) {
+                                              .addPostFrameCallback((_) {
                                             // Add Your Code here.
                                             ref
                                                 .watch(isSpaceEmpty.notifier)
@@ -193,7 +193,7 @@ class _StaffHomePageState extends State<StaffHomePage> {
                                                                   whiteColor))));
                                         } else {
                                           WidgetsBinding.instance
-                                              ?.addPostFrameCallback((_) {
+                                              .addPostFrameCallback((_) {
                                             // Add Your Code here.
                                             ref
                                                 .watch(isSpaceEmpty.notifier)

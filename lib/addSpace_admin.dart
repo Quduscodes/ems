@@ -223,7 +223,7 @@ class _AddAdminSpaceState extends ConsumerState<AddAdminSpace> {
                                           );
                                         }
                                         WidgetsBinding.instance
-                                            ?.addPostFrameCallback((_) {
+                                            .addPostFrameCallback((_) {
                                           // Add Your Code here.
                                           if (appliances.isNotEmpty) {
                                             if (ref.watch(applianceList) ==

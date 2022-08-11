@@ -16,7 +16,7 @@ class RouteSelector extends StatelessWidget {
     return ProviderScope(
       child: ScreenUtilInit(
         designSize: const Size(375, 854),
-        builder: () {
+        builder: (context, child) {
           return MaterialApp(
             title: "EMS",
             color: Colors.white,
